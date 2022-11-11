@@ -3,6 +3,7 @@ name: Docker
 on:
   push:
     paths:
+    - 'Context/**'
     - '**/Dockerfile'
     - '.dockerignore'
     - '.github/workflows/build.yml'
@@ -27,8 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
-
-  steps:
+    steps:
     - name: Clone Repository
       uses: actions/checkout@v3
 
@@ -53,7 +53,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-
+    steps:
     - name: Create Metadata for Docker Image
       id: metadata
       uses: docker/metadata-action@v4

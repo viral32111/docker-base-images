@@ -3,7 +3,7 @@
 # Start from the official Ubuntu image
 FROM ubuntu:22.04
 
-# Configure the regular user & disable Bash history
+# Configure the regular user & disable shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \

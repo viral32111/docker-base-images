@@ -3,7 +3,7 @@
 # Start from the official Ubuntu image
 FROM ubuntu:22.10
 
-# Configure regular user & disable Bash history
+# Configure the regular user & disable shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \
@@ -18,7 +18,7 @@ COPY --chmod=644 --chown=0:0 ./viral32111.crt /usr/local/share/ca-certificates/v
 
 # Install public CA certificates
 RUN apt-get update && \
-	apt-get	install	--no-install-recommends	--yes ca-certificates && \
+	apt-get install --no-install-recommends --yes ca-certificates && \
 	rm --verbose --force --recursive /var/log/* /var/lib/apt/lists/*
 
 # Switch to secure package repository mirror hosted in the United Kingdom

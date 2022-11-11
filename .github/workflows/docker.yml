@@ -55,7 +55,7 @@ jobs:
       - name: Create build context directory
         run: |
           mkdir --verbose --parents ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
-          cp --verbose --archive ./Context/* ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
+          cp --verbose --preserve=all ./Context/* ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
 
       - name: Download & minify release archive
         run: |

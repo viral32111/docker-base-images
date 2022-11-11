@@ -95,7 +95,7 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           file: ./Distributions/Ubuntu/Dockerfile
-          context: ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.release }}
+          context: ./Context
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           no-cache: true

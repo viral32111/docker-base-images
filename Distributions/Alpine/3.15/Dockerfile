@@ -21,8 +21,8 @@ RUN apk add --no-cache ca-certificates
 
 # Switch to a package repository mirror hosted in the United Kingdom
 RUN printf "%s\n%s\n" \
-		"https://uk.alpinelinux.org/alpine/v3.16/main" \
-		"https://uk.alpinelinux.org/alpine/v3.16/community" | tee /etc/apk/repositories
+		"https://uk.alpinelinux.org/alpine/v3.15/main" \
+		"https://uk.alpinelinux.org/alpine/v3.15/community" | tee /etc/apk/repositories
 
 # Create the regular user
 RUN mkdir -v -p ${USER_HOME} && \

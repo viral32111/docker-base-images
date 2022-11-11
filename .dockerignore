@@ -1,0 +1,7 @@
+# Ignore GitHub workflows
+.github/
+
+# Ignore metadata files
+README.md
+SECURITY.md
+LICENSE.txt

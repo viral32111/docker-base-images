@@ -28,6 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
+      packages: write
     steps:
     - name: Login to GitHub Container Registry
       if: github.event_name != 'pull_request' && github.ref_name == 'main'

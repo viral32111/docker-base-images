@@ -23,26 +23,9 @@ env:
   PUBLISHER_WEBSITE: https://viral32111.com
 
 jobs:
-  login:
-    name: Login
-    runs-on: ubuntu-22.04
-    permissions:
-      contents: read
-      packages: write
-    steps:
-    - name: Login to GitHub Container Registry
-      if: github.event_name != 'pull_request' && github.ref_name == 'main'
-      uses: docker/login-action@v2
-      with:
-        registry: ${{ env.REGISTRY_NAME }}
-        username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        logout: false
-
   build-ubuntu:
     name: Build Ubuntu
     runs-on: ubuntu-22.04
-    needs: login
     env:
       REGISTRY_IMAGE_NAME: ubuntu
       HUMAN_IMAGE_NAME: Ubuntu
@@ -55,6 +38,14 @@ jobs:
     steps:
     - name: Clone Repository
       uses: actions/checkout@v3
+
+    - name: Login to GitHub Container Registry
+      if: github.event_name != 'pull_request' && github.ref_name == 'main'
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY_NAME }}
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Create Metadata for Docker Image
       id: metadata

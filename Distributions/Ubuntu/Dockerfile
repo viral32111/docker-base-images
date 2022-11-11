@@ -21,7 +21,7 @@ RUN apt-get update && \
 	apt-get upgrade --yes && \
 	apt-get install --no-install-recommends --yes ca-certificates && \
 	apt-get clean && \
-	rm --verbose --force --recursive /var/log/* /var/lib/apt/lists/*
+	rm --verbose --force --recursive /var/lib/apt/lists/*
 
 # Switch to secure package repository mirror hosted in the United Kingdom
 RUN printf "%s\n%s\n%s\n%s\n" \

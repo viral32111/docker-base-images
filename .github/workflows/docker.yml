@@ -62,20 +62,10 @@ jobs:
           RELEASE_VERSION=$(curl -s https://api.launchpad.net/1.0/ubuntu/${RELEASE_NAME}/all_milestones | jq --arg today ${DATE_TODAY} -r '[ .entries[] | select( ( .name | endswith( "-updates" ) | not ) and .date_targeted <= $today ) ][ 0 ].name' | sed --regexp-extended 's/^ubuntu-//g')
           echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Download & minify release archive
+      - name: Download release archive
         run: |
           RELEASE_DOWNLOAD_URL="https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.release }}/release/ubuntu-base-${{ steps.release.outputs.RELEASE_VERSION }}-base-amd64.tar.gz"
-          RELEASE_DOWNLOAD_DIR="/tmp/${{ env.REGISTRY_IMAGE_NAME }}-${{ matrix.release }}-base"
-          RELEASE_DOWNLOAD_FILE="${RELEASE_DOWNLOAD_DIR}.tar.gz"
-
-          wget --output-document ${RELEASE_DOWNLOAD_FILE} ${RELEASE_DOWNLOAD_URL}
-          mkdir --verbose --parents ${RELEASE_DOWNLOAD_DIR}
-          tar --verbose --extract --no-same-owner --file ${RELEASE_DOWNLOAD_FILE} --directory ${RELEASE_DOWNLOAD_DIR}
-
-          rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}/var/log/* ${RELEASE_DOWNLOAD_FILE}
-          tar --verbose --create --gzip --file ./Context/base.tar.gz --directory ${RELEASE_DOWNLOAD_DIR} .
-
-          rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}
+          wget --output-document ./Context/base.tar.gz ${RELEASE_DOWNLOAD_URL}
 
       - name: Create metadata for Docker image
         id: metadata

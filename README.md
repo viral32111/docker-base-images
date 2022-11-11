@@ -18,9 +18,9 @@ The following changes are made on these images:
 
 The following images are available:
 * [Ubuntu](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu)
-  * 22.10 (`ghcr.io/viral32111/ubuntu:22.10`)
-  * 22.04 (`ghcr.io/viral32111/ubuntu:22.04`)
   * 20.04 (`ghcr.io/viral32111/ubuntu:20.04`)
+  * 22.04 (`ghcr.io/viral32111/ubuntu:22.04`)
+  * 22.10 (`ghcr.io/viral32111/ubuntu:22.10`)
 * [Alpine](https://github.com/viral32111/docker-base-images/pkgs/container/alpine)
   * 3.15 (`ghcr.io/viral32111/alpine:3.15`)
   * 3.16 (`ghcr.io/viral32111/alpine:3.16`)

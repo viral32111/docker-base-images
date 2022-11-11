@@ -1,2 +1,3 @@
-# docker-base-images
-My personal Docker base images for my other application &amp; service images.
+# Docker Base Images
+
+This repository contains, builds & publishes my base Docker images that I use across all my other images.

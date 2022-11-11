@@ -4,7 +4,7 @@
 # This image works for Java 8, as it uses the legacy version scheme.
 
 # Start from Ubuntu
-FROM registry.server.home/ubuntu:22.10
+FROM ghcr.io/viral32111/ubuntu:22.10
 
 # Configure version & directory
 ARG JAVA_VERSION_MAJOR=8 \

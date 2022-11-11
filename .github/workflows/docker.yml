@@ -68,9 +68,10 @@ jobs:
           RELEASE_DOWNLOAD_FILE="${RELEASE_DOWNLOAD_DIR}.tar.gz"
 
           wget --output-document ${RELEASE_DOWNLOAD_FILE} ${RELEASE_DOWNLOAD_URL}
+          mkdir --verbose --parents ${RELEASE_DOWNLOAD_DIR}
           tar --verbose --extract --no-same-owner --file ${RELEASE_DOWNLOAD_FILE} --directory ${RELEASE_DOWNLOAD_DIR}
 
-          rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}/var/log/*
+          rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}/var/log/* ${RELEASE_DOWNLOAD_FILE}
           tar --verbose --create --gzip --file ./Context/base.tar.gz --directory ${RELEASE_DOWNLOAD_DIR} .
 
           rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}

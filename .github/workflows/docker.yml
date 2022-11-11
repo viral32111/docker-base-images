@@ -52,6 +52,28 @@ jobs:
         with:
           platforms: linux/amd64
 
+      - name: Create build context directory
+        run: |
+          mkdir --verbose --parents ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
+          cp --verbose --archive ./Context/* ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
+
+      - name: Download & minify release archive
+        run: |
+          RELEASE_DOWNLOAD_URL="https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.version }}/release/ubuntu-base-${{ matrix.version }}-base-amd64.tar.gz"
+          RELEASE_DOWNLOAD_DIR="/tmp/${{ env.REGISTRY_IMAGE_NAME }}-${{ matrix.version }}-base"
+          RELEASE_DOWNLOAD_FILE="${RELEASE_DOWNLOAD_DIR}.tar.gz"
+          wget --output-document ${RELEASE_DOWNLOAD_FILE} ${RELEASE_DOWNLOAD_URL}
+          tar --verbose --extract --no-same-owner --file ${RELEASE_DOWNLOAD_FILE} --directory ${RELEASE_DOWNLOAD_PATH}
+          rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}/var/log/*
+          tar --verbose --create --gzip --file ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}/base.tar.gz --directory ${RELEASE_DOWNLOAD_DIR} .
+          rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}
+
+      - name: Fetch release name
+        id: release
+        run: |
+          RELEASE_NAME=$(curl -s https://api.launchpad.net/1.0/ubuntu/series | jq -r '.entries[] | select( .version == "${{ matrix.version }}" ) | .name')
+          echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_OUTPUT
+
       - name: Create Metadata for Docker Image
         id: metadata
         uses: docker/metadata-action@v4
@@ -70,12 +92,15 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
-          file: ./Distributions/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}/Dockerfile
-          context: ./Context/
+          file: ./Distributions/Ubuntu/Dockerfile
+          context: ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           no-cache: true
           pull: true
+          build-args: |
+            UBUNTU_RELEASE_VERSION=${{ matrix.version }}
+            UBUNTU_RELEASE_NAME=${{ steps.release.outputs.RELEASE_NAME }}
 
   alpine:
     name: Alpine
@@ -178,9 +203,9 @@ jobs:
       - name: Fetch latest Java version
         id: version
         run: |
-          LATEST_RELEASE_URL="https://api.github.com/repos/adoptium/temurin${{ matrix.version }}-binaries/releases/latest"
-          LATEST_VERSION=$(curl --silent --header 'Accept: application/vnd.github+json' ${LATEST_RELEASE_URL} | jq -r .name | sed --regexp-extended 's/^jdk-?//g')
-          echo "JAVA_VERSION_LATEST=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+          VERSION_URL="https://api.github.com/repos/adoptium/temurin${{ matrix.version }}-binaries/releases/latest"
+          VERSION_LATEST=$(curl --silent --header 'Accept: application/vnd.github+json' ${VERSION_URL} | jq -r .name | sed --regexp-extended 's/^jdk-?//g')
+          echo "VERSION_LATEST=${VERSION_LATEST}" >> $GITHUB_OUTPUT
 
           VERSION_SCHEME=$(case ${{ matrix.version }} in 8) echo Legacy ;; 16) echo JDK ;; *) echo Modern ;; esac)
           echo "VERSION_SCHEME=${VERSION_SCHEME}" >> $GITHUB_OUTPUT
@@ -197,4 +222,4 @@ jobs:
           pull: true
           build-args: |
             JAVA_VERSION_MAJOR=${{ matrix.version }}
-            JAVA_VERSION_LATEST=${{ steps.version.outputs.JAVA_VERSION_LATEST }}
+            JAVA_VERSION_LATEST=${{ steps.version.outputs.VERSION_LATEST }}

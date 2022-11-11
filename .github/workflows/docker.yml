@@ -31,12 +31,12 @@ jobs:
       HUMAN_IMAGE_NAME: Ubuntu
     strategy:
       matrix:
-        version: [ '20.04', '22.04', '22.10' ]
+        release: [ '20.04', '22.04', '22.10' ]
     permissions:
       contents: read
       packages: write
     steps:
-      - name: Clone Repository
+      - name: Clone repository
         uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
@@ -52,54 +52,55 @@ jobs:
         with:
           platforms: linux/amd64
 
-      - name: Create build context directory
+      - name: Fetch latest version
+        id: release
         run: |
-          mkdir --verbose --parents ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
-          rsync --verbose --times ./Context/* ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
+          RELEASE_NAME=$(curl -s https://api.launchpad.net/1.0/ubuntu/series | jq -r '.entries[] | select( .version == "${{ matrix.release }}" ) | .name')
+          echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_OUTPUT
+
+          RELEASE_VERSION=$(curl -s https://api.launchpad.net/1.0/ubuntu/${RELEASE_NAME}/all_milestones | jq -r '.entries[ 1 ].name')
+          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Download & minify release archive
         run: |
-          RELEASE_DOWNLOAD_URL="https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.version }}/release/ubuntu-base-${{ matrix.version }}-base-amd64.tar.gz"
-          RELEASE_DOWNLOAD_DIR="/tmp/${{ env.REGISTRY_IMAGE_NAME }}-${{ matrix.version }}-base"
+          RELEASE_DOWNLOAD_URL="https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.release }}/release/ubuntu-base-${{ steps.release.outputs.RELEASE_VERSION }}-base-amd64.tar.gz"
+          RELEASE_DOWNLOAD_DIR="/tmp/${{ env.REGISTRY_IMAGE_NAME }}-${{ matrix.release }}-base"
           RELEASE_DOWNLOAD_FILE="${RELEASE_DOWNLOAD_DIR}.tar.gz"
+
           wget --output-document ${RELEASE_DOWNLOAD_FILE} ${RELEASE_DOWNLOAD_URL}
           tar --verbose --extract --no-same-owner --file ${RELEASE_DOWNLOAD_FILE} --directory ${RELEASE_DOWNLOAD_PATH}
+
           rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}/var/log/*
-          tar --verbose --create --gzip --file ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}/base.tar.gz --directory ${RELEASE_DOWNLOAD_DIR} .
+          tar --verbose --create --gzip --file ./Context/base.tar.gz --directory ${RELEASE_DOWNLOAD_DIR} .
+
           rm --verbose --recursive ${RELEASE_DOWNLOAD_DIR}
 
-      - name: Fetch release name
-        id: release
-        run: |
-          RELEASE_NAME=$(curl -s https://api.launchpad.net/1.0/ubuntu/series | jq -r '.entries[] | select( .version == "${{ matrix.version }}" ) | .name')
-          echo "RELEASE_NAME=${RELEASE_NAME}" >> $GITHUB_OUTPUT
-
-      - name: Create Metadata for Docker Image
+      - name: Create metadata for Docker image
         id: metadata
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
           images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
-          tags: type=raw,value=${{ matrix.version }}
+          tags: type=raw,value=${{ matrix.release }}
           labels: |
-            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
-            org.opencontainers.image.description=My personal image for ${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}.
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.release.outputs.RELEASE_VERSION }}
+            org.opencontainers.image.description=My personal image for ${{ env.HUMAN_IMAGE_NAME }} ${{ steps.release.outputs.RELEASE_VERSION }}.
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ matrix.version }}
+            org.opencontainers.image.version=${{ matrix.release }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
-      - name: Build & Push Docker Image
+      - name: Build & push Docker image
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           file: ./Distributions/Ubuntu/Dockerfile
-          context: ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.version }}
+          context: ./Context/${{ env.HUMAN_IMAGE_NAME }}/${{ matrix.release }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           no-cache: true
           pull: true
           build-args: |
-            UBUNTU_RELEASE_VERSION=${{ matrix.version }}
+            UBUNTU_RELEASE_VERSION=${{ steps.release.outputs.RELEASE_VERSION }}
             UBUNTU_RELEASE_NAME=${{ steps.release.outputs.RELEASE_NAME }}
 
   alpine:
@@ -200,7 +201,7 @@ jobs:
             org.opencontainers.image.version=${{ matrix.version }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
-      - name: Fetch latest Java version
+      - name: Fetch latest version
         id: version
         run: |
           VERSION_URL="https://api.github.com/repos/adoptium/temurin${{ matrix.version }}-binaries/releases/latest"

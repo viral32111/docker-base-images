@@ -23,8 +23,8 @@ env:
   PUBLISHER_WEBSITE: https://viral32111.com
 
 jobs:
-  build-ubuntu:
-    name: Build Ubuntu
+  ubuntu:
+    name: Ubuntu
     runs-on: ubuntu-22.04
     env:
       REGISTRY_IMAGE_NAME: ubuntu
@@ -77,8 +77,8 @@ jobs:
           no-cache: true
           pull: true
 
-  build-alpine:
-    name: Build Alpine
+  alpine:
+    name: Alpine
     runs-on: ubuntu-22.04
     env:
       REGISTRY_IMAGE_NAME: alpine
@@ -131,9 +131,10 @@ jobs:
           no-cache: true
           pull: true
 
-  build-java:
-    name: Build Java
+  java:
+    name: Java
     runs-on: ubuntu-22.04
+    needs: ubuntu
     env:
       REGISTRY_IMAGE_NAME: java
       HUMAN_IMAGE_NAME: Java

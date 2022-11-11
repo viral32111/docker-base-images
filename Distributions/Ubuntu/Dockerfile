@@ -46,3 +46,6 @@ RUN mkdir --verbose --parents ${USER_HOME} && \
 
 # Switch to the regular user's home directory
 WORKDIR ${USER_HOME}
+
+# Start a shell by default
+CMD [ "bash" ]

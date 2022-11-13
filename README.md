@@ -40,9 +40,9 @@ The following images are available:
 ## .NET
 
 The following images are available:
- * [.NET](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet)
+* [.NET](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet)
   * .NET 6.0 (`ghcr.io/viral32111/dotnet:6.0`)
   * .NET 7.0 (`ghcr.io/viral32111/dotnet:7.0`)
- * [ASP.NET Core](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore)
+* [ASP.NET Core](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore)
   * .NET 6.0 (`ghcr.io/viral32111/aspnetcore:6.0`)
   * .NET 7.0 (`ghcr.io/viral32111/aspnetcore:7.0`)

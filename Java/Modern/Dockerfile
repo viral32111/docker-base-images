@@ -19,10 +19,11 @@ RUN apt-get update && \
 	wget --no-hsts --progress dot:mega --output-document /tmp/java.tar.gz https://github.com/adoptium/temurin${JAVA_VERSION_MAJOR}-binaries/releases/download/jdk-${JAVA_VERSION_LATEST}/OpenJDK${JAVA_VERSION_MAJOR}U-jre_x64_linux_hotspot_${JAVA_VERSION_FILE}.tar.gz 2>&1 && \
 	tar --verbose --extract --no-same-owner --strip-components 1 --file /tmp/java.tar.gz --directory ${JAVA_DIRECTORY} && \
 	apt-get remove --purge --autoremove --yes wget && \
+	apt-get clean --yes && \
 	rm --verbose --force --recursive \
 		/tmp/java.tar.gz \
 		${JAVA_DIRECTORY}/NOTICE \
-		/var/log/* /var/lib/apt/lists/*
+		/var/lib/apt/lists/*
 
 # Add Java to the binaries path
 ENV PATH=${JAVA_DIRECTORY}/bin:$PATH

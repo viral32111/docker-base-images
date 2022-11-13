@@ -19,10 +19,11 @@ RUN apt-get update && \
 	wget --progress dot:mega --output-document /tmp/aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-${ASPNETCORE_VERSION}-linux-x64.tar.gz 2>&1 && \
 	tar --verbose --extract --strip-components 1 --file /tmp/aspnetcore.tar.gz --directory ${ASPNETCORE_DIRECTORY} && \
 	apt-get remove --purge --autoremove --yes wget && \
+	apt-get clean --yes && \
 	rm --verbose --recursive --force \
 		/tmp/aspnetcore.tar.gz \
 		${ASPNETCORE_DIRECTORY}/LICENSE.txt ${ASPNETCORE_DIRECTORY}/ThirdPartyNotices.txt \
-		/var/log/* /var/lib/apt/lists/*
+		/var/lib/apt/lists/*
 
 # Add .NET to the binaries path & disable telemetry
 ENV PATH=${ASPNETCORE_DIRECTORY}:$PATH \

@@ -20,7 +20,7 @@ COPY --chmod=644 --chown=0:0 ./viral32111.crt /usr/local/share/ca-certificates/v
 RUN apt-get update && \
 	apt-get upgrade --yes && \
 	apt-get install --no-install-recommends --yes ca-certificates && \
-	apt-get clean && \
+	apt-get clean  --yes && \
 	rm --verbose --force --recursive /var/lib/apt/lists/*
 
 # Switch to secure package repository mirror hosted in the United Kingdom

@@ -180,7 +180,7 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: Clone Repository
+      - name: Clone repository
         uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
@@ -196,20 +196,6 @@ jobs:
         with:
           platforms: linux/amd64
 
-      - name: Create Metadata for Docker Image
-        id: metadata
-        uses: docker/metadata-action@v4
-        with:
-          flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
-          tags: type=raw,value=${{ matrix.version }}
-          labels: |
-            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
-            org.opencontainers.image.description=My personal image for ${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}.
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ matrix.version }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
-
       - name: Fetch latest version
         id: version
         run: |
@@ -220,7 +206,21 @@ jobs:
           VERSION_SCHEME=$(case ${{ matrix.version }} in 8) echo Legacy ;; 16) echo JDK ;; *) echo Modern ;; esac)
           echo "VERSION_SCHEME=${VERSION_SCHEME}" >> $GITHUB_OUTPUT
 
-      - name: Build & Push Docker Image
+      - name: Create Metadata for Docker Image
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          flavor: latest=false
+          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: type=raw,value=${{ matrix.version }}
+          labels: |
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.VERSION_LATEST }}
+            org.opencontainers.image.description=My personal image for ${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.VERSION_LATEST }}.
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.VERSION_LATEST }}
+            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      - name: Build & push Docker image
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}

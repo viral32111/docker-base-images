@@ -36,3 +36,13 @@ The following images are available:
  * Java 17 (`ghcr.io/viral32111/java:17`)
  * Java 18 (`ghcr.io/viral32111/java:18`)
  * Java 19 (`ghcr.io/viral32111/java:19`)
+
+## .NET
+
+The following images are available:
+ * [.NET](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet)
+  * .NET 6.0 (`ghcr.io/viral32111/dotnet:6.0`)
+  * .NET 7.0 (`ghcr.io/viral32111/dotnet:7.0`)
+ * [ASP.NET Core](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore)
+  * .NET 6.0 (`ghcr.io/viral32111/aspnetcore:6.0`)
+  * .NET 7.0 (`ghcr.io/viral32111/aspnetcore:7.0`)

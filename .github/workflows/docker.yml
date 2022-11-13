@@ -78,7 +78,7 @@ jobs:
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.release.outputs.RELEASE_VERSION }}
             org.opencontainers.image.description=My personal image for ${{ env.HUMAN_IMAGE_NAME }} ${{ steps.release.outputs.RELEASE_VERSION }}.
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ matrix.release }}
+            org.opencontainers.image.version=${{ steps.release.outputs.RELEASE_VERSION }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
       - name: Build & push Docker image
@@ -149,7 +149,7 @@ jobs:
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.release.outputs.result }}
             org.opencontainers.image.description=My personal image for ${{ env.HUMAN_IMAGE_NAME }} ${{ steps.release.outputs.result }}.
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ matrix.release }}
+            org.opencontainers.image.version=${{ steps.release.outputs.result }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
       - name: Build & push Docker image

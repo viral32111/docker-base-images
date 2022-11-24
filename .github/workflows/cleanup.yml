@@ -1,11 +1,17 @@
 name: Cleanup
 
-# This action deletes all untagged images older than 1 week.
-# It runs every Sunday at 01:00, so after the Docker build workflow.
+# This action deletes all of the untagged Docker images from the Container Registry.
 
 on:
+  push:
+    paths:
+      - '.github/workflows/cleanup.yml'
   schedule:
     - cron: '0 1 * * 0'
+  workflow_run:
+    workflows: [ 'Ubuntu', 'Alpine' ]
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
@@ -18,12 +24,12 @@ jobs:
       contents: read
       packages: write
     steps:
-      - name: Delete untagged images
+      - name: Delete untagged Docker images
         uses: snok/container-retention-policy@v1
         with:
-          image-names: ubuntu,alpine,java
-          cut-off: 1 week ago UTC
+          image-names: ubuntu,alpine,java,dotnet,aspnetcore
+          cut-off: 0 seconds ago UTC
           keep-at-least: 1
           untagged-only: true
           account-type: personal
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_PACKAGES }}

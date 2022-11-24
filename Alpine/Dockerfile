@@ -6,7 +6,7 @@
 FROM scratch
 
 # Configure versions
-ARG ALPINE_BRANCH=3.16 \
+ARG ALPINE_BRANCH=3.17 \
 	HEALTHCHECK_VERSION=2.0.0
 
 # Extract the root filesystem

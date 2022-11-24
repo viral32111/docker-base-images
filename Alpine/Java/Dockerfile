@@ -1,0 +1,34 @@
+# https://adoptium.net/temurin/releases/
+
+# Start from Alpine
+FROM ghcr.io/viral32111/alpine:3.17 AS configuration
+
+# Configure the Java version & directory
+ARG JAVA_VERSION=19.0.1+10 \
+	JAVA_DIRECTORY=/opt/java
+
+# Download Eclipse Temurin's Java from Adoptium
+RUN apk add --no-cache wget && \
+	mkdir -v -p ${JAVA_DIRECTORY} && \
+	export JAVA_VERSION_MAJOR=$([[ "${JAVA_VERSION}" == 8u* ]] && echo "${JAVA_VERSION}" | cut -d u -f 1 || echo "${JAVA_VERSION}" | cut -d . -f 1) && \
+	export JAVA_VERSION_MAJOR=$([[ "${JAVA_VERSION}" == 8u* ]] && echo "${JAVA_VERSION}" | sed 's/-//' || echo "${JAVA_VERSION}" | sed -E 's/\+/_/') && \
+	export JAVA_DOWNLOAD_TYPE=$([ "${JAVA_VERSION_MAJOR}" == '16' ] && echo 'jdk' || echo 'jre') && \
+	wget --no-hsts --progress dot:mega --output-document /tmp/java.tar.gz https://github.com/adoptium/temurin${JAVA_VERSION_MAJOR}-binaries/releases/download/jdk-${JAVA_VERSION}/OpenJDK${JAVA_VERSION_MAJOR}U-${JAVA_DOWNLOAD_TYPE}_x64_alpine-linux_hotspot_${JAVA_VERSION_FILE}.tar.gz 2>&1 && \
+	tar x -v -o --strip-components 1 \
+		--exclude '*/NOTICE' \
+		--exclude '*/LICENSE' \
+		--exclude '*/THIRD_PARTY_README' \
+		--exclude '*/ASSEMBLY_EXCEPTION' \
+		--exclude '*/release' \
+		--exclude '*/man' \
+		-f /tmp/java.tar.gz -C ${JAVA_DIRECTORY} && \
+	apk del --no-cache wget && \
+	rm -v -r /tmp/java.tar.gz
+
+# Add Java to the binaries & libraries paths, and set the Java directory
+ENV PATH=${JAVA_DIRECTORY}/bin:$PATH \
+	LD_LIBRARY_PATH=${JAVA_DIRECTORY}/lib:$LD_LIBRARY_PATH \
+	JAVA_HOME=${JAVA_DIRECTORY}
+
+# Run commands with Java
+ENTRYPOINT [ "java" ]

@@ -1,0 +1,159 @@
+name: Alpine
+
+# This action builds the Alpine Linux Docker image, and all images based on it.
+
+on:
+  push:
+    paths:
+      - 'Context/**'
+      - 'Alpine/**'
+      - '.dockerignore'
+      - '.github/workflows/alpine.yml'
+    branches:
+      - '**'
+    tags:
+      - '*.*.*'
+  pull_request:
+    branches:
+      - '**'
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+
+env:
+  REGISTRY_NAME: ghcr.io
+  PUBLISHER_WEBSITE: https://viral32111.com
+
+jobs:
+  alpine:
+    name: Alpine
+    runs-on: ubuntu-22.04
+    env:
+      REGISTRY_IMAGE_NAME: alpine
+      HUMAN_IMAGE_NAME: Alpine Linux
+    strategy:
+      matrix:
+        version: [ '3.16', '3.17' ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request' && github.ref_name == 'main'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_NAME }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/amd64
+
+      - name: Download latest version file
+        run: |
+          wget --output-document ./latest-releases.yaml https://dl-cdn.alpinelinux.org/alpine/v${{ matrix.version }}/releases/x86_64/latest-releases.yaml
+
+      - name: Extract latest version
+        id: version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq '.[] | select( .flavor == "alpine-minirootfs" ) | .version' ./latest-releases.yaml
+
+      - name: Download latest version archive
+        run: |
+          wget --output-document ./Context/base.tar.gz https://dl-cdn.alpinelinux.org/alpine/v${{ matrix.version }}/releases/x86_64/alpine-minirootfs-${{ steps.version.outputs.result }}-x86_64.tar.gz
+
+      - name: Create metadata for Docker image
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          flavor: latest=false
+          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: type=raw,value=${{ matrix.version }}
+          labels: |
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.result }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.result }}
+            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
+          file: ./Alpine/Dockerfile
+          context: ./Context
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          no-cache: true
+          pull: true
+          build-args: |
+            ALPINE_BRANCH=${{ matrix.version }}
+
+  java:
+    name: Java
+    runs-on: ubuntu-22.04
+    needs: alpine
+    env:
+      REGISTRY_IMAGE_NAME: java
+      HUMAN_IMAGE_NAME: Java
+    strategy:
+      matrix:
+        version: [ '8', '11', '16', '17', '18', '19' ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request' && github.ref_name == 'main'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_NAME }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/amd64
+
+      - name: Fetch latest version
+        id: version
+        run: |
+          JAVA_VERSION=$(curl --silent --header 'Accept: application/vnd.github+json' "https://api.github.com/repos/adoptium/temurin${{ matrix.version }}-binaries/releases/latest" | jq -r .name | sed --regexp-extended 's/^jdk-?//g')
+          echo "JAVA_VERSION=${JAVA_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Create metadata for Docker image
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          flavor: latest=false
+          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: type=raw,value=${{ matrix.version }}
+          labels: |
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.JAVA_VERSION }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.JAVA_VERSION }}
+            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
+          file: ./Alpine/Java/Dockerfile
+          context: /var/empty
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          no-cache: true
+          pull: true
+          build-args: |
+            JAVA_VERSION=${{ steps.version.outputs.JAVA_VERSION }}

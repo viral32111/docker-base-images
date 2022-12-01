@@ -86,7 +86,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
-          file: ./Alpine/Dockerfile
+          file: ./Images/Alpine/Dockerfile
           context: ./Context
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
@@ -212,7 +212,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
-          file: ./Images/Ubuntu/.NET/Dockerfile
+          file: ./Images/Alpine/.NET/Dockerfile
           context: /var/empty
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
@@ -275,7 +275,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
-          file: ./Images/Ubuntu/ASP.NET/Dockerfile
+          file: ./Images/Alpine/ASP.NET/Dockerfile
           context: /var/empty
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}

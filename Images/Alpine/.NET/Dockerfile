@@ -15,8 +15,8 @@ RUN apk add --no-cache \
 	mkdir -v -p ${DOTNET_DIRECTORY} && \
 	wget --progress dot:mega --output-document /tmp/dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-musl-x64.tar.gz 2>&1 && \
 	tar x -v -o --strip-components 1 \
-		--exlude '*/LICENSE.txt' \
-		--exlude '*/ThirdPartyNotices.txt' \
+		--exclude '*/LICENSE.txt' \
+		--exclude '*/ThirdPartyNotices.txt' \
 		-f /tmp/dotnet.tar.gz -C ${DOTNET_DIRECTORY} && \
 	apk del --no-cache wget && \
 	rm -v -r /tmp/dotnet.tar.gz

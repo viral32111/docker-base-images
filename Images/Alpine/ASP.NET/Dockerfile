@@ -15,8 +15,8 @@ RUN apk add --no-cache \
 	mkdir -v -p ${ASPNETCORE_DIRECTORY} && \
 	wget --progress dot:mega --output-document /tmp/aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-${ASPNETCORE_VERSION}-linux-musl-x64.tar.gz 2>&1 && \
 	tar x -v -o --strip-components 1 \
-		--exlude '*/LICENSE.txt' \
-		--exlude '*/ThirdPartyNotices.txt' \
+		--exclude '*/LICENSE.txt' \
+		--exclude '*/ThirdPartyNotices.txt' \
 		-f /tmp/aspnetcore.tar.gz -C ${ASPNETCORE_DIRECTORY} && \
 	apk del --no-cache wget && \
 	rm -v -r /tmp/aspnetcore.tar.gz

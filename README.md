@@ -22,8 +22,9 @@ The following images are available:
   * 22.04 (`ghcr.io/viral32111/ubuntu:22.04`)
   * 22.10 (`ghcr.io/viral32111/ubuntu:22.10`)
 * [Alpine](https://github.com/viral32111/docker-base-images/pkgs/container/alpine)
-  * 3.15 (`ghcr.io/viral32111/alpine:3.15`)
+  * ~~3.15 (`ghcr.io/viral32111/alpine:3.15`)~~
   * 3.16 (`ghcr.io/viral32111/alpine:3.16`)
+  * 3.17 (`ghcr.io/viral32111/alpine:3.17`)
 
 ## Java
 

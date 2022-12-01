@@ -1,7 +1,7 @@
 # https://adoptium.net/temurin/releases/
 
 # Start from Alpine
-FROM ghcr.io/viral32111/alpine:3.17 AS configuration
+FROM ghcr.io/viral32111/alpine:3.17
 
 # Configure the Java version & directory
 ARG JAVA_VERSION=19.0.1+10 \
@@ -25,7 +25,7 @@ RUN apk add --no-cache wget && \
 	apk del --no-cache wget && \
 	rm -v -r /tmp/java.tar.gz
 
-# Add Java to the binaries & libraries paths, and set the Java directory
+# Add Java to the binaries & libraries paths & set its install directory
 ENV PATH=${JAVA_DIRECTORY}/bin:$PATH \
 	LD_LIBRARY_PATH=${JAVA_DIRECTORY}/lib:$LD_LIBRARY_PATH \
 	JAVA_HOME=${JAVA_DIRECTORY}

@@ -294,4 +294,4 @@ jobs:
           no-cache: true
           pull: true
           build-args: |
-            DOTNET_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
+            ASPNETCORE_VERSION=${{ steps.version.outputs.LATEST_VERSION }}

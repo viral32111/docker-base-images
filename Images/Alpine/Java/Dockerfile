@@ -1,5 +1,8 @@
 # https://adoptium.net/temurin/releases/
 
+# https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u352-b08/OpenJDK8U-debugimage_x64_alpine-linux_hotspot_8u352b08.tar.gz
+# https://github.com/adoptium/temurin8-binaries/releases/download/jdk-8u352-b08/OpenJDK8U-jre_x64_alpine-linux_hotspot_8u352b08.tar.gz
+
 # Start from Alpine
 FROM ghcr.io/viral32111/alpine:3.17
 
@@ -13,7 +16,8 @@ RUN apk add --no-cache wget && \
 	export JAVA_VERSION_MAJOR=$([[ "${JAVA_VERSION}" == 8u* ]] && echo "${JAVA_VERSION}" | cut -d u -f 1 || echo "${JAVA_VERSION}" | cut -d . -f 1) && \
 	export JAVA_VERSION_FILE=$([[ "${JAVA_VERSION}" == 8u* ]] && echo "${JAVA_VERSION}" | sed 's/-//' || echo "${JAVA_VERSION}" | sed -E 's/\+/_/') && \
 	export JAVA_DOWNLOAD_TYPE=$([ "${JAVA_VERSION_MAJOR}" == '16' ] && echo 'jdk' || echo 'jre') && \
-	wget --no-hsts --progress dot:mega --output-document /tmp/java.tar.gz https://github.com/adoptium/temurin${JAVA_VERSION_MAJOR}-binaries/releases/download/jdk-${JAVA_VERSION}/OpenJDK${JAVA_VERSION_MAJOR}U-${JAVA_DOWNLOAD_TYPE}_x64_alpine-linux_hotspot_${JAVA_VERSION_FILE}.tar.gz 2>&1 && \
+	export GITHUB_RELEASE_TITLE=$([ "${JAVA_VERSION_MAJOR}" == '8' ] && echo "jdk${JAVA_VERSION}" || echo "jdk-${JAVA_VERSION}") && \
+	wget --no-hsts --progress dot:mega --output-document /tmp/java.tar.gz https://github.com/adoptium/temurin${JAVA_VERSION_MAJOR}-binaries/releases/download/${GITHUB_RELEASE_TITLE}/OpenJDK${JAVA_VERSION_MAJOR}U-${JAVA_DOWNLOAD_TYPE}_x64_alpine-linux_hotspot_${JAVA_VERSION_FILE}.tar.gz 2>&1 && \
 	tar x -v -o --strip-components 1 \
 		--exclude '*/NOTICE' \
 		--exclude '*/LICENSE' \

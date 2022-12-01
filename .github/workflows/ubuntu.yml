@@ -6,7 +6,7 @@ on:
   push:
     paths:
       - 'Context/**'
-      - 'Ubuntu/**'
+      - 'Images/Ubuntu/**'
       - '.dockerignore'
       - '.github/workflows/ubuntu.yml'
     branches:

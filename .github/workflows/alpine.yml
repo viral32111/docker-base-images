@@ -6,7 +6,7 @@ on:
   push:
     paths:
       - 'Context/**'
-      - 'Alpine/**'
+      - 'Images/Alpine/**'
       - '.dockerignore'
       - '.github/workflows/alpine.yml'
     branches:

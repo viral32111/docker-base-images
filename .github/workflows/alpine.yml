@@ -131,6 +131,10 @@ jobs:
           JAVA_VERSION=$(curl --silent --header 'Accept: application/vnd.github+json' "https://api.github.com/repos/adoptium/temurin${{ matrix.version }}-binaries/releases/latest" | jq -r .name | sed --regexp-extended 's/^jdk-?//g')
           echo "JAVA_VERSION=${JAVA_VERSION}" >> $GITHUB_OUTPUT
 
+      - name: Create empty context directory
+        run: |
+          mkdir --verbose ./EmptyContext
+
       - name: Create metadata for Docker image
         id: metadata
         uses: docker/metadata-action@v4
@@ -150,7 +154,7 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           file: ./Images/Alpine/Java/Dockerfile
-          context: /var/empty
+          context: ./EmptyContext
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           no-cache: true
@@ -194,6 +198,10 @@ jobs:
           LATEST_VERSION=$(curl --silent "https://dotnetcli.azureedge.net/dotnet/Runtime/${{ matrix.version }}/latest.version")
           echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
+      - name: Create empty context directory
+        run: |
+          mkdir --verbose ./EmptyContext
+
       - name: Create metadata for Docker image
         id: metadata
         uses: docker/metadata-action@v4
@@ -213,7 +221,7 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           file: ./Images/Alpine/.NET/Dockerfile
-          context: /var/empty
+          context: ./EmptyContext
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           no-cache: true
@@ -257,6 +265,10 @@ jobs:
           LATEST_VERSION=$(curl --silent "https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${{ matrix.version }}/latest.version")
           echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
+      - name: Create empty context directory
+        run: |
+          mkdir --verbose ./EmptyContext
+
       - name: Create metadata for Docker image
         id: metadata
         uses: docker/metadata-action@v4
@@ -276,7 +288,7 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           file: ./Images/Alpine/ASP.NET/Dockerfile
-          context: /var/empty
+          context: ./EmptyContext
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           no-cache: true

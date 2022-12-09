@@ -98,6 +98,7 @@ jobs:
   nodejs:
     name: Node.js
     runs-on: ubuntu-22.04
+    needs: ubuntu
     env:
       REGISTRY_IMAGE_NAME: nodejs
       HUMAN_IMAGE_NAME: Node.js
@@ -127,7 +128,7 @@ jobs:
       - name: Fetch latest version
         id: version
         run: |
-          LATEST_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r --arg VERSION ${{ matrix.version }} '[ .[] | select( .version | startswith( "v" + $VERSION ) ) ][ 0 ].version')
+          LATEST_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r --arg VERSION ${{ matrix.version }} '[ .[] | select( .version | startswith( "v" + $VERSION ) ) ][ 0 ].version' | cut -b 2-)
           echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Create empty context directory

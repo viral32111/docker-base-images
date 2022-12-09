@@ -47,3 +47,9 @@ The following images are available:
 * [ASP.NET Core](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore)
   * .NET 6.0 (`ghcr.io/viral32111/aspnetcore:6.0`)
   * .NET 7.0 (`ghcr.io/viral32111/aspnetcore:7.0`)
+
+## Node.js
+
+The following images are available:
+ * Node.js 18 (`ghcr.io/viral32111/nodejs:18`)
+ * Node.js 19 (`ghcr.io/viral32111/nodejs:19`)

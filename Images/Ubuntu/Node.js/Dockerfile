@@ -32,7 +32,7 @@ ENV PATH=${NODEJS_DIRECTORY}/bin:$PATH \
 
 # Update NPM to the latest version
 RUN npm install --global npm@latest && \
-	npm cache clean && \
+	npm cache clean --force && \
 	rm --verbose --recursive $HOME/.npm
 
 # Run commands with Node.js

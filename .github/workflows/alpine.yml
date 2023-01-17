@@ -107,10 +107,9 @@ jobs:
       REGISTRY_IMAGE_NAME: java
       HUMAN_IMAGE_NAME: Java
     strategy:
+      max-parallel: 1
       matrix:
         version: [ '8', '11', '16', '17', '18', '19' ]
-    concurrency:
-      group: ${{ github.workflow }}-java-${{ github.run_id }}
     permissions:
       contents: read
       packages: write

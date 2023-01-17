@@ -20,6 +20,10 @@ on:
     - cron: '0 1 * * 0'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
 env:
   REGISTRY_NAME: ghcr.io
   PUBLISHER_WEBSITE: https://viral32111.com

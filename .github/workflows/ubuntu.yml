@@ -98,6 +98,9 @@ jobs:
           pull: true
           build-args: |
             UBUNTU_VERSION_NAME=${{ steps.version.outputs.VERSION_NAME }}
+          # https://github.com/docker/build-push-action/issues/761
+          driver-opts: |
+            image=moby/buildkit:v0.10.6
 
   nodejs:
     name: Node.js
@@ -165,3 +168,6 @@ jobs:
           pull: true
           build-args: |
             NODEJS_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
+          # https://github.com/docker/build-push-action/issues/761
+          driver-opts: |
+            image=moby/buildkit:v0.10.6

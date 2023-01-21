@@ -222,12 +222,10 @@ jobs:
             console.log( repositoryOwner )
             console.log( repositoryName )
 
-            const listReleases = await github.rest.repos.listReleases( {
+            const releases = await github.paginate( github.rest.repos.listReleases, {
                 owner: repositoryOwner,
                 repo: repositoryName
             } );
-            console.log( listReleases )
-            const releases = await github.paginate( listReleases )
             console.log( releases )
 
             for ( const release of releases ) {
@@ -235,13 +233,11 @@ jobs:
               console.log( release.id )
               console.log( release.assets )
 
-              const listReleaseAssets = github.rest.repos.listReleaseAssets( {
+              const releaseAssets = await github.paginate( github.rest.repos.listReleaseAssets, {
                   owner: repositoryOwner,
                   repo: repositoryName,
                   release_id: release.id
               } );
-              console.log( listReleaseAssets )
-              const releaseAssets = await github.paginate( listReleaseAssets )
               console.log( releaseAssets )
 
               for ( const releaseAsset of releaseAssets ) {

@@ -220,7 +220,7 @@ jobs:
             const repositoryOwner = 'adoptium';
             const repositoryName = 'temurin' + process.env.MATRIX_VERSION + '-binaries';
 
-            const releases = github.paginate( github.rest.repos.listReleases, {
+            const releases = await github.paginate( github.rest.repos.listReleases, {
                 repositoryOwner,
                 repositoryName
             } );

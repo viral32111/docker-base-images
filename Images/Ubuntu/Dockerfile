@@ -10,7 +10,7 @@ ARG UBUNTU_VERSION_NAME=kinetic \
 	HEALTHCHECK_VERSION=2.0.0
 
 # Extract the root filesystem
-ADD --chown=0:0 ./base.tar.gz /
+ADD --chown=0:0 ./ubuntu.tar.gz /
 
 # Add my personal CA root certificate
 COPY --chmod=644 --chown=0:0 ./viral32111.crt /usr/local/share/ca-certificates/viral32111.crt

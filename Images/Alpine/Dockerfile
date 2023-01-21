@@ -10,7 +10,7 @@ ARG ALPINE_BRANCH=3.17 \
 	HEALTHCHECK_VERSION=2.0.0
 
 # Extract the root filesystem
-ADD --chown=0:0 ./base.tar.gz /
+ADD --chown=0:0 ./alpine.tar.gz /
 
 # Add my personal CA root certificate
 COPY --chmod=644 --chown=0:0 ./viral32111.crt /usr/local/share/ca-certificates/

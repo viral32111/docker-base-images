@@ -227,7 +227,14 @@ jobs:
             const releases = await github.paginate( listReleases )
 
             for ( const release of releases ) {
-              for ( const releaseAsset of release.assets ) {
+              const listReleaseAssets = github.rest.repos.listReleaseAssets( {
+                  owner: repositoryOwner,
+                  repo: repositoryName,
+                  release_id: release.id
+              } );
+              const releaseAssets = await github.paginate( listReleaseAssets )
+
+              for ( const releaseAsset of releaseAssets ) {
                 if ( process.env.MATRIX_DISTRO == 'alpine' && releaseAsset.name.includes( 'jre_x64_alpine-linux' ) ) {
                   return release.name.replace( /^jdk-?/, '' );
                 } else if ( process.env.MATRIX_DISTRO == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) ) {

@@ -60,4 +60,5 @@ ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/d
 WORKDIR ${USER_HOME}
 
 # Start a shell by default
-CMD [ "bash" ]
+SHELL [ "/bin/bash", "-c" ]
+CMD [ "/bin/bash" ]

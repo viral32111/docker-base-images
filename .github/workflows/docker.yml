@@ -30,12 +30,11 @@ concurrency:
 env:
   REGISTRY_NAME: ghcr.io
   PUBLISHER_WEBSITE: https://viral32111.com
-  JOB_RUNNER: ubuntu-22.04
 
 jobs:
   ubuntu:
     name: Ubuntu
-    runs-on: ${{ env.JOB_RUNNER }}
+    runs-on: ubuntu-22.04
     env:
       REGISTRY_IMAGE_NAME: ubuntu
       HUMAN_IMAGE_NAME: Ubuntu
@@ -106,7 +105,7 @@ jobs:
 
   alpine:
     name: Alpine Linux
-    runs-on: ${{ env.JOB_RUNNER }}
+    runs-on: ubuntu-22.04
     env:
       REGISTRY_IMAGE_NAME: alpine
       HUMAN_IMAGE_NAME: Alpine Linux
@@ -173,7 +172,7 @@ jobs:
 
   java:
     name: Java
-    runs-on: ${{ env.JOB_RUNNER }}
+    runs-on: ubuntu-22.04
     needs:
       - ubuntu
       - alpine
@@ -247,7 +246,7 @@ jobs:
 
   dotnet:
     name: .NET Runtime
-    runs-on: ${{ env.JOB_RUNNER }}
+    runs-on: ubuntu-22.04
     needs:
       - alpine
     env:
@@ -320,7 +319,7 @@ jobs:
 
   aspnetcore:
     name: ASP.NET Core Runtime
-    runs-on: ${{ env.JOB_RUNNER }}
+    runs-on: ubuntu-22.04
     needs:
       - alpine
     env:
@@ -393,7 +392,7 @@ jobs:
 
   nodejs:
     name: Node.js
-    runs-on: ${{ env.JOB_RUNNER }}
+    runs-on: ubuntu-22.04
     needs:
       - ubuntu
     env:
@@ -466,7 +465,7 @@ jobs:
 
   cleanup:
     name: Cleanup Registry
-    runs-on: ${{ env.JOB_RUNNER }}
+    runs-on: ubuntu-22.04
     if: ${{ always() }}
     needs:
       - ubuntu

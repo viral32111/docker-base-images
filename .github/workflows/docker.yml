@@ -222,7 +222,7 @@ jobs:
             console.log( repositoryOwner )
             console.log( repositoryName )
 
-            const listReleases = github.rest.repos.listReleases( {
+            const listReleases = await github.rest.repos.listReleases( {
                 owner: repositoryOwner,
                 repo: repositoryName
             } );

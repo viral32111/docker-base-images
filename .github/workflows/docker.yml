@@ -173,7 +173,7 @@ jobs:
 
   java:
     name: Java
-    runs-on: ubuntu-22.04
+    runs-on: ${{ env.JOB_RUNNER }}
     needs:
       - ubuntu
       - alpine
@@ -222,7 +222,9 @@ jobs:
         with:
           flavor: latest=false
           images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
-          tags: type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
+          tags: |
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "alpine" }}
+            type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.JAVA_VERSION }} (${{ matrix.distro }}-based)
@@ -242,3 +244,249 @@ jobs:
           pull: true
           build-args: |
             JAVA_VERSION=${{ steps.version.outputs.JAVA_VERSION }}
+
+  dotnet:
+    name: .NET Runtime
+    runs-on: ${{ env.JOB_RUNNER }}
+    needs:
+      - alpine
+    env:
+      REGISTRY_IMAGE_NAME: dotnet
+      HUMAN_IMAGE_NAME: .NET Runtime
+    strategy:
+      matrix:
+        version: [ '6.0', '7.0' ]
+        distro: [ 'alpine' ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request' && github.ref_name == 'main'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_NAME }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/amd64
+          # https://github.com/docker/build-push-action/issues/761
+          driver-opts: |
+            image=moby/buildkit:v0.10.6
+
+      - name: Fetch latest version
+        id: version
+        run: |
+          LATEST_VERSION=$(curl --silent "https://dotnetcli.azureedge.net/dotnet/Runtime/${{ matrix.version }}/latest.version")
+          echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Clear context directory
+        run: rm --verbose --recursive ./context/*
+
+      - name: Create metadata for Docker image
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          flavor: latest=false
+          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "alpine" }}
+            type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
+          labels: |
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
+          file: ./images/${{ matrix.distro }}/.net/dockerfile
+          context: ./context
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          no-cache: true
+          pull: true
+          build-args: |
+            DOTNET_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
+
+  aspnetcore:
+    name: ASP.NET Core Runtime
+    runs-on: ${{ env.JOB_RUNNER }}
+    needs:
+      - alpine
+    env:
+      REGISTRY_IMAGE_NAME: aspnetcore
+      HUMAN_IMAGE_NAME: ASP.NET Core Runtime
+    strategy:
+      matrix:
+        version: [ '6.0', '7.0' ]
+        distro: [ 'alpine' ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request' && github.ref_name == 'main'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_NAME }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/amd64
+          # https://github.com/docker/build-push-action/issues/761
+          driver-opts: |
+            image=moby/buildkit:v0.10.6
+
+      - name: Fetch latest version
+        id: version
+        run: |
+          LATEST_VERSION=$(curl --silent "https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${{ matrix.version }}/latest.version")
+          echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Clear context directory
+        run: rm --verbose --recursive ./context/*
+
+      - name: Create metadata for Docker image
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          flavor: latest=false
+          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "alpine" }}
+            type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
+          labels: |
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
+          file: ./images/${{ matrix.distro }}/asp.net/dockerfile
+          context: ./context
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          no-cache: true
+          pull: true
+          build-args: |
+            ASPNETCORE_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
+
+  nodejs:
+    name: Node.js
+    runs-on: ${{ env.JOB_RUNNER }}
+    needs:
+      - ubuntu
+    env:
+      REGISTRY_IMAGE_NAME: nodejs
+      HUMAN_IMAGE_NAME: Node.js
+    strategy:
+      matrix:
+        version: [ '18', '19' ]
+        distro: [ 'ubuntu' ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request' && github.ref_name == 'main'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_NAME }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/amd64
+          # https://github.com/docker/build-push-action/issues/761
+          driver-opts: |
+            image=moby/buildkit:v0.10.6
+
+      - name: Fetch latest version
+        id: version
+        run: |
+          LATEST_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r --arg VERSION ${{ matrix.version }} '[ .[] | select( .version | startswith( "v" + $VERSION ) ) ][ 0 ].version' | cut -b 2-)
+          echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Clear context directory
+        run: rm --verbose --recursive ./context/*
+
+      - name: Create metadata for Docker image
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          flavor: latest=false
+          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "ubuntu" }}
+            type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
+          labels: |
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
+          file: ./images/${{ matrix.distro }}/node.js/dockerfile
+          context: ./context
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          no-cache: true
+          pull: true
+          build-args: |
+            NODEJS_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
+
+  cleanup:
+    name: Cleanup Registry
+    runs-on: ${{ env.JOB_RUNNER }}
+    if: ${{ always() }}
+    needs:
+      - ubuntu
+      - alpine
+      - java
+      - dotnet
+      - aspnetcore
+      - nodejs
+    env:
+      REGISTRY_NAME: ghcr.io
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Delete untagged Docker images
+        uses: snok/container-retention-policy@v1
+        with:
+          image-names: ubuntu,alpine,java,dotnet,aspnetcore,nodejs
+          cut-off: 0 seconds ago UTC
+          keep-at-least: 1
+          untagged-only: true
+          account-type: personal
+          token: ${{ secrets.PAT_PACKAGES }}

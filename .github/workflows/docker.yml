@@ -210,7 +210,7 @@ jobs:
 
       - name: Fetch latest version
         id: version
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         env:
           MATRIX_VERSION: ${{ matrix.version }}
           MATRIX_DISTRO: ${{ matrix.distro }}
@@ -220,7 +220,7 @@ jobs:
             const repositoryOwner = 'adoptium';
             const repositoryName = 'temurin' + process.env.MATRIX_VERSION + '-binaries';
 
-            const releases = await github.paginate( github.rest.repos.listReleases, {
+            const releases = github.paginate( github.rest.repos.listReleases, {
                 repositoryOwner,
                 repositoryName
             } );

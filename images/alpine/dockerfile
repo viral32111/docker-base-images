@@ -19,7 +19,7 @@ COPY --chown=0:0 --chmod=644 ./viral32111.crt /usr/local/share/ca-certificates/v
 RUN apk upgrade --no-cache && \
 	apk add --no-cache ca-certificates tzdata musl-locales musl-locales-lang && \
 	cp -v -a /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
-	printf 'Etc/UTC' | tee /etc/timezone && \
+	printf "Etc/UTC" | tee /etc/timezone && \
 	apk del --no-cache tzdata && \
 	printf "%s\n%s\n" \
 		"https://uk.alpinelinux.org/alpine/v${ALPINE_BRANCH}/main" \

@@ -206,8 +206,6 @@ jobs:
           driver-opts: |
             image=moby/buildkit:v0.10.6
 
-
-
       - name: Fetch latest version
         id: version
         uses: actions/github-script@v6
@@ -219,6 +217,7 @@ jobs:
           script: |
             const repositoryOwner = 'adoptium';
             const repositoryName = 'temurin' + process.env.MATRIX_VERSION + '-binaries';
+            const releaseType = process.env.MATRIX_VERSION === '16' ? 'jdk' : 'jre';
 
             const releases = await github.paginate( github.rest.repos.listReleases, {
                 owner: repositoryOwner,
@@ -229,9 +228,9 @@ jobs:
               if ( release.draft === true || release.prerelease === true ) continue;
 
               for ( const releaseAsset of release.assets ) {
-                if ( process.env.MATRIX_DISTRO == 'alpine' && releaseAsset.name.includes( 'jre_x64_alpine-linux' ) ) {
+                if ( process.env.MATRIX_DISTRO == 'alpine' && releaseAsset.name.includes( releaseType + '_x64_alpine-linux' ) ) {
                   return release.name.replace( /^jdk-?/, '' );
-                } else if ( process.env.MATRIX_DISTRO == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) ) {
+                } else if ( process.env.MATRIX_DISTRO == 'ubuntu' && releaseAsset.name.includes( releaseType + '_x64_linux' ) ) {
                   return release.name.replace( /^jdk-?/, '' );
                 }
               }

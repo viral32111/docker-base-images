@@ -211,11 +211,14 @@ jobs:
       - name: Fetch latest version
         id: version
         uses: actions/github-script@v3
+        env:
+          MATRIX_VERSION: ${{ matrix.version }}
+          MATRIX_DISTRO: ${{ matrix.distro }}
         with:
           result-encoding: string
           script: |
             const repositoryOwner = 'adoptium';
-            const repositoryName = 'temurin' + context.matrix.version + '-binaries';
+            const repositoryName = 'temurin' + process.env.MATRIX_VERSION + '-binaries';
 
             const releases = await github.paginate( github.rest.repos.listReleases, {
                 repositoryOwner,
@@ -224,9 +227,9 @@ jobs:
 
             for ( const release of releases ) {
               for ( const releaseAsset of release.assets ) {
-                if ( context.matrix.distro == 'alpine' && releaseAsset.name.includes( 'jre_x64_alpine-linux' ) ) {
+                if ( process.env.MATRIX_DISTRO == 'alpine' && releaseAsset.name.includes( 'jre_x64_alpine-linux' ) ) {
                   return release.name.replace( /^jdk-?/, '' );
-                } else if ( context.matrix.distro == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) ) {
+                } else if ( process.env.MATRIX_DISTRO == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) ) {
                   return release.name.replace( /^jdk-?/, '' );
                 }
               }

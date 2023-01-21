@@ -219,30 +219,16 @@ jobs:
           script: |
             const repositoryOwner = 'adoptium';
             const repositoryName = 'temurin' + process.env.MATRIX_VERSION + '-binaries';
-            console.log( repositoryOwner )
-            console.log( repositoryName )
 
             const releases = await github.paginate( github.rest.repos.listReleases, {
                 owner: repositoryOwner,
                 repo: repositoryName
             } );
-            console.log( releases )
 
             for ( const release of releases ) {
-              console.log( release )
-              console.log( release.id )
-              console.log( release.assets )
+              if ( release.draft === true || release.prerelease === true ) continue;
 
-              const releaseAssets = await github.paginate( github.rest.repos.listReleaseAssets, {
-                  owner: repositoryOwner,
-                  repo: repositoryName,
-                  release_id: release.id
-              } );
-              console.log( releaseAssets )
-
-              for ( const releaseAsset of releaseAssets ) {
-                console.log( releaseAsset )
-
+              for ( const releaseAsset of release.assets ) {
                 if ( process.env.MATRIX_DISTRO == 'alpine' && releaseAsset.name.includes( 'jre_x64_alpine-linux' ) ) {
                   return release.name.replace( /^jdk-?/, '' );
                 } else if ( process.env.MATRIX_DISTRO == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) ) {

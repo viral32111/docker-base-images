@@ -226,6 +226,7 @@ jobs:
                 owner: repositoryOwner,
                 repo: repositoryName
             } );
+            console.log( listReleases )
             const releases = await github.paginate( listReleases )
             console.log( releases )
 
@@ -239,6 +240,7 @@ jobs:
                   repo: repositoryName,
                   release_id: release.id
               } );
+              console.log( listReleaseAssets )
               const releaseAssets = await github.paginate( listReleaseAssets )
               console.log( releaseAssets )
 

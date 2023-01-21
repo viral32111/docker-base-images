@@ -219,7 +219,7 @@ jobs:
             const repositoryName = 'temurin' + process.env.MATRIX_VERSION + '-binaries';
             const releaseType = process.env.MATRIX_VERSION === '16' ? 'jdk' : 'jre';
 
-            for await ( const releases of github.paginate.iterator( {
+            for await ( const releases of github.paginate.iterator( github.rest.repos.listReleases, {
                 owner: repositoryOwner,
                 repo: repositoryName
             } ) ) {

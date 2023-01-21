@@ -13,24 +13,27 @@ ARG ALPINE_BRANCH=3.17 \
 ADD --chown=0:0 ./alpine.tar.gz /
 
 # Add my personal CA root certificate
-COPY --chmod=644 --chown=0:0 ./viral32111.crt /usr/local/share/ca-certificates/
+COPY --chown=0:0 --chmod=644 ./viral32111.crt /usr/local/share/ca-certificates/viral32111.crt
 
-# Upgrade packages & install public CA certificates
+# Upgrade packages, install common base packages & switch to a package repository mirror hosted in the United Kingdom
 RUN apk upgrade --no-cache && \
-	apk add --no-cache ca-certificates
-
-# Switch to a package repository mirror hosted in the United Kingdom
-RUN printf "%s\n%s\n" \
+	apk add --no-cache ca-certificates tzdata musl-locales musl-locales-lang && \
+	cp -v -a /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
+	printf 'Etc/UTC' | tee /etc/timezone && \
+	apk del --no-cache tzdata && \
+	printf "%s\n%s\n" \
 		"https://uk.alpinelinux.org/alpine/v${ALPINE_BRANCH}/main" \
 		"https://uk.alpinelinux.org/alpine/v${ALPINE_BRANCH}/community" | tee /etc/apk/repositories
 
-# Download my container healthcheck utility
-ADD --chmod=755 https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-amd64-musl /usr/local/bin/healthcheck
-
-# Configure the regular user & disable shell history
+# Configure the regular user, character encoding, language, timezone & shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \
+	CHARSET=UTF-8 \
+	LC_ALL=en_GB.UTF-8 \
+	LANG=en_GB.UTF-8 \
+	LANGUAGE=en_GB \
+	TZ=Etc/UTC \
 	HISTFILE=/dev/null
 
 # Create the regular user
@@ -38,6 +41,9 @@ RUN mkdir -v -p ${USER_HOME} && \
 	addgroup -S -g ${USER_ID} ${USER_NAME} && \
 	adduser -S -D -s /sbin/nologin -H -h ${USER_HOME} -g ${USER_NAME} -G ${USER_NAME} -u ${USER_ID} ${USER_NAME} && \
 	chown -c -R ${USER_ID}:${USER_ID} ${USER_HOME}
+
+# Download my container healthcheck utility
+ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-amd64-musl /usr/local/bin/healthcheck
 
 # Switch to the regular user's home directory
 WORKDIR ${USER_HOME}

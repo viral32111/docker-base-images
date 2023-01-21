@@ -214,8 +214,8 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const repositoryOwner = 'adoptium'
-            const repositoryName = 'temurin' + context.matrix.version + '-binaries'
+            const repositoryOwner = 'adoptium';
+            const repositoryName = 'temurin' + context.matrix.version + '-binaries';
 
             const releases = await github.paginate( github.rest.repos.listReleases, {
                 repositoryOwner,
@@ -225,14 +225,14 @@ jobs:
             for ( const release of releases ) {
               for ( const releaseAsset of release.assets ) {
                 if ( context.matrix.distro == 'alpine' && releaseAsset.name.includes( 'jre_x64_alpine-linux' ) ) {
-                  return release.name.replace( /^jdk-?/, '' )
-                } else if ( context.matrix.distro == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) )
-                  return release.name.replace( /^jdk-?/, '' )
+                  return release.name.replace( /^jdk-?/, '' );
+                } else if ( context.matrix.distro == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) ) {
+                  return release.name.replace( /^jdk-?/, '' );
                 }
               }
             }
 
-            core.setFailed( 'Failed to fetch the latest version' )
+            core.setFailed( 'Failed to fetch the latest version' );
 
       - name: Clear context directory
         run: rm --verbose --recursive ./context/*

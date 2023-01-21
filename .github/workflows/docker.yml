@@ -206,17 +206,32 @@ jobs:
           driver-opts: |
             image=moby/buildkit:v0.10.6
 
+
+
       - name: Fetch latest version
         id: version
-        run: |
-          export JAVA_VERSION=$(curl --silent --header 'Accept: application/vnd.github+json' --header 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' "https://api.github.com/repos/adoptium/temurin${{ matrix.version }}-binaries/releases/latest" | jq -r .name | sed --regexp-extended 's/^jdk-?//g')
-          echo "JAVA_VERSION=${JAVA_VERSION}" >> $GITHUB_OUTPUT
-
-      - name: Check latest version
-        if: ${{ steps.version.outputs.JAVA_VERSION }} == 'null'
         uses: actions/github-script@v3
         with:
+          result-encoding: string
           script: |
+            const repositoryOwner = 'adoptium'
+            const repositoryName = 'temurin' + context.matrix.version + '-binaries'
+
+            const releases = await github.paginate( github.rest.repos.listReleases, {
+                repositoryOwner,
+                repositoryName
+            } );
+
+            for ( const release of releases ) {
+              for ( const releaseAsset of release.assets ) {
+                if ( context.matrix.distro == 'alpine' && releaseAsset.name.includes( 'jre_x64_alpine-linux' ) ) {
+                  return release.name.replace( /^jdk-?/, '' )
+                } else if ( context.matrix.distro == 'ubuntu' && releaseAsset.name.includes( 'jre_x64_linux' ) )
+                  return release.name.replace( /^jdk-?/, '' )
+                }
+              }
+            }
+
             core.setFailed( 'Failed to fetch the latest version' )
 
       - name: Clear context directory
@@ -233,9 +248,9 @@ jobs:
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
-            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.JAVA_VERSION }} (${{ matrix.distro }}-based)
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.result }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ steps.version.outputs.JAVA_VERSION }}
+            org.opencontainers.image.version=${{ steps.version.outputs.result }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
       - name: Build & push Docker image
@@ -249,7 +264,7 @@ jobs:
           no-cache: true
           pull: true
           build-args: |
-            JAVA_VERSION=${{ steps.version.outputs.JAVA_VERSION }}
+            JAVA_VERSION=${{ steps.version.outputs.result }}
 
   dotnet:
     name: .NET Runtime

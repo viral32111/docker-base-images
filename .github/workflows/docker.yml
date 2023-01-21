@@ -222,7 +222,7 @@ jobs:
           flavor: latest=false
           images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "alpine" }}
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
@@ -295,7 +295,7 @@ jobs:
           flavor: latest=false
           images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "alpine" }}
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
@@ -368,7 +368,7 @@ jobs:
           flavor: latest=false
           images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "alpine" }}
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
@@ -441,7 +441,7 @@ jobs:
           flavor: latest=false
           images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == "ubuntu" }}
+            type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'ubuntu' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}

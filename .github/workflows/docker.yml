@@ -138,7 +138,7 @@ jobs:
       - name: Fetch & download latest version
         id: version
         run: |
-          export LATEST_VERSION=$(curl --silent https://dl-cdn.alpinelinux.org/alpine/v3.17/releases/x86_64/latest-releases.yaml | yq '.[] | select( .flavor == "alpine-minirootfs" ) | .version')
+          export LATEST_VERSION=$(curl --silent https://dl-cdn.alpinelinux.org/alpine/v${{ matrix.version }}/releases/x86_64/latest-releases.yaml | yq '.[] | select( .flavor == "alpine-minirootfs" ) | .version')
           echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
           wget --output-document ./context/alpine.tar.gz https://dl-cdn.alpinelinux.org/alpine/v${{ matrix.version }}/releases/x86_64/alpine-minirootfs-${LATEST_VERSION}-x86_64.tar.gz

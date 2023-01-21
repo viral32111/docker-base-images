@@ -221,8 +221,8 @@ jobs:
             const repositoryName = 'temurin' + process.env.MATRIX_VERSION + '-binaries';
 
             const listReleases = github.rest.repos.listReleases( {
-                repositoryOwner,
-                repositoryName
+                owner: repositoryOwner,
+                repo: repositoryName
             } );
             const releases = await github.paginate( listReleases )
 

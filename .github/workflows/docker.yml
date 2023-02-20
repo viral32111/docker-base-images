@@ -507,7 +507,7 @@ jobs:
       packages: write
     steps:
       - name: Delete untagged Docker images
-        uses: snok/container-retention-policy@v1
+        uses: snok/container-retention-policy@v2
         with:
           image-names: ubuntu,alpine,java,dotnet,aspnetcore,nodejs
           cut-off: 0 seconds ago UTC

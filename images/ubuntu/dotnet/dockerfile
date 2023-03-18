@@ -1,0 +1,32 @@
+# https://dotnet.microsoft.com/en-us/download/dotnet/7.0
+# https://learn.microsoft.com/en-gb/dotnet/core/install/linux-ubuntu-2210#dependencies
+
+# Start from Ubuntu
+FROM ghcr.io/viral32111/ubuntu:22.10
+
+# Configure version & directory
+ARG DOTNET_VERSION=7.0.4 \
+	DOTNET_DIRECTORY=/opt/dotnet
+
+# Download & install .NET Runtime
+RUN apt-get update && \
+	apt-get install --no-install-recommends --yes \
+		wget \
+		libc6 libgcc1 libgcc-s1 libgssapi-krb5-2 libicu71 liblttng-ust1 libssl3 libstdc++6 libunwind8 zlib1g && \
+	wget --progress dot:mega --output-document /tmp/dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-x64.tar.gz 2>&1 && \
+	tar --verbose --extract --no-same-owner --strip-components 1 --file /tmp/dotnet.tar.gz --directory ${DOTNET_DIRECTORY} \
+		--exclude '*/LICENSE.txt' \
+		--exclude '*/ThirdPartyNotices.txt' && \
+	apt-get purge --auto-remove --yes wget && \
+	apt-get clean --yes && \
+	rm --verbose --recursive \
+		/tmp/dotnet.tar.gz \
+		/var/lib/apt/lists/*
+
+# Add .NET to the system path, set the install directory & disable telemetry
+ENV PATH=${DOTNET_DIRECTORY}:$PATH \
+	DOTNET_ROOT=${DOTNET_DIRECTORY} \
+	DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+# Run commands with .NET
+ENTRYPOINT [ "dotnet" ]

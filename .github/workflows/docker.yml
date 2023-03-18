@@ -356,7 +356,7 @@ jobs:
     strategy:
       matrix:
         version: [ '6.0', '7.0' ]
-        distro: [ 'alpine' ]
+        distro: [ 'alpine', 'ubuntu' ]
     permissions:
       contents: read
       packages: write
@@ -409,7 +409,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
-          file: ./images/${{ matrix.distro }}/asp.net/dockerfile
+          file: ./images/${{ matrix.distro }}/aspnetcore/dockerfile
           context: ./context
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}

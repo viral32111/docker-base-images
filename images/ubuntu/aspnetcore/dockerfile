@@ -1,0 +1,32 @@
+# https://dotnet.microsoft.com/en-us/download/dotnet/7.0
+# https://learn.microsoft.com/en-gb/dotnet/core/install/linux-ubuntu-2210#dependencies
+
+# Start from Ubuntu
+FROM ghcr.io/viral32111/ubuntu:22.10
+
+# Configure version & directory
+ARG ASPNETCORE_VERSION=7.0.4 \
+	ASPNETCORE_DIRECTORY=/opt/aspnetcore
+
+# Download & install ASP.NET Runtime
+RUN apt-get update && \
+	apt-get install --no-install-recommends --yes \
+		wget \
+		libc6 libgcc1 libgcc-s1 libgssapi-krb5-2 libicu71 liblttng-ust1 libssl3 libstdc++6 libunwind8 zlib1g && \
+	wget --progress dot:mega --output-document /tmp/aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-${ASPNETCORE_VERSION}-linux-x64.tar.gz 2>&1 && \
+	tar --verbose --extract --no-same-owner --strip-components 1 --file /tmp/aspnetcore.tar.gz --directory ${ASPNETCORE_DIRECTORY} \
+		--exclude '*/LICENSE.txt' \
+		--exclude '*/ThirdPartyNotices.txt' && \
+	apt-get purge --auto-remove --yes wget && \
+	apt-get clean --yes && \
+	rm --verbose --recursive \
+		/tmp/aspnetcore.tar.gz \
+		/var/lib/apt/lists/*
+
+# Add ASP.NET to the system path, set the install directory & disable telemetry
+ENV PATH=${ASPNETCORE_DIRECTORY}:$PATH \
+	DOTNET_ROOT=${ASPNETCORE_DIRECTORY} \
+	DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+# Run commands with ASP.NET
+ENTRYPOINT [ "dotnet" ]

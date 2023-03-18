@@ -5,10 +5,10 @@
 FROM ghcr.io/viral32111/alpine:3.17
 
 # Configure version & directory
-ARG ASPNETCORE_VERSION=7.0.0 \
+ARG ASPNETCORE_VERSION=7.0.4 \
 	ASPNETCORE_DIRECTORY=/opt/aspnetcore
 
-# Download & install .NET
+# Download & install ASP.NET Core Runtime
 RUN apk add --no-cache \
 		wget \
 		icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib && \
@@ -21,10 +21,10 @@ RUN apk add --no-cache \
 	apk del --no-cache wget && \
 	rm -v -r /tmp/aspnetcore.tar.gz
 
-# Add .NET to the binaries path, set its install directory & disable telemetry
+# Add ASP.NET to the binaries path, set its install directory & disable telemetry
 ENV PATH=${ASPNETCORE_DIRECTORY}:$PATH \
 	DOTNET_ROOT=${ASPNETCORE_DIRECTORY} \
 	DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-# Run commands with .NET
+# Run commands with ASP.NET
 ENTRYPOINT [ "dotnet" ]

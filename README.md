@@ -68,3 +68,12 @@ These images are based on Ubuntu 22.10.
 | ----- | ------- | ---------------- | ---- |
 | [Node.js v18](https://nodejs.org) | 18.15.0 | [`ghcr.io/viral32111/nodejs:18`](https://github.com/viral32111/docker-base-images/pkgs/container/nodejs) | |
 | [Node.js v19](https://nodejs.org) | 19.8.1 | [`ghcr.io/viral32111/nodejs:19`](https://github.com/viral32111/docker-base-images/pkgs/container/nodejs) | |
+
+
+## Python
+
+These images are based on Ubuntu 22.10.
+
+| Title | Version | Image name & tag | Note |
+| ----- | ------- | ---------------- | ---- |
+| [Python 3](https://python.org) | 3.11.2 | [`ghcr.io/viral32111/python:3`](https://github.com/viral32111/docker-base-images/pkgs/container/python) | |

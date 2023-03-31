@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 # https://adoptium.net/temurin/releases/
 
 # https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u352-b08/OpenJDK8U-debugimage_x64_alpine-linux_hotspot_8u352b08.tar.gz

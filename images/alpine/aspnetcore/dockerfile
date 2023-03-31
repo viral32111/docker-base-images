@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 # https://dotnet.microsoft.com/en-us/download/dotnet/7.0
 # https://learn.microsoft.com/en-gb/dotnet/core/install/linux-alpine#dependencies
 

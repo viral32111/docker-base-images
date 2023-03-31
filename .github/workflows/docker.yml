@@ -525,7 +525,7 @@ jobs:
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            org.opencontainers.image.version=3.11.2
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
       - name: Build & push Docker image

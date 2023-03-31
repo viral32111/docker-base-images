@@ -14,9 +14,6 @@ on:
       - '**'
     tags:
       - '*.*.*'
-  pull_request:
-    branches:
-      - '**'
   schedule:
     - cron: '0 1 * * 0'
   workflow_dispatch:
@@ -60,9 +57,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/amd64
-          # https://github.com/docker/build-push-action/issues/761
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+          driver-opts: image=moby/buildkit:v0.10.6
 
       # 20.04.6 is disabled for now as it has no base image available
       - name: Fetch & download latest version
@@ -132,9 +127,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/amd64
-          # https://github.com/docker/build-push-action/issues/761
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+          driver-opts: image=moby/buildkit:v0.10.6
 
       - name: Fetch & download latest version
         id: version
@@ -203,9 +196,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/amd64
-          # https://github.com/docker/build-push-action/issues/761
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+          driver-opts: image=moby/buildkit:v0.10.6
 
       - name: Fetch latest version
         id: version
@@ -303,9 +294,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/amd64
-          # https://github.com/docker/build-push-action/issues/761
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+          driver-opts: image=moby/buildkit:v0.10.6
 
       - name: Fetch latest version
         id: version
@@ -349,6 +338,7 @@ jobs:
     name: ASP.NET Core Runtime
     runs-on: ubuntu-22.04
     needs:
+      - ubuntu
       - alpine
     env:
       REGISTRY_IMAGE_NAME: aspnetcore
@@ -356,7 +346,7 @@ jobs:
     strategy:
       matrix:
         version: [ '6.0', '7.0' ]
-        distro: [ 'alpine', 'ubuntu' ]
+        distro: [ 'ubuntu', 'alpine' ]
     permissions:
       contents: read
       packages: write
@@ -376,9 +366,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/amd64
-          # https://github.com/docker/build-push-action/issues/761
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+          driver-opts: image=moby/buildkit:v0.10.6
 
       - name: Fetch latest version
         id: version
@@ -449,9 +437,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/amd64
-          # https://github.com/docker/build-push-action/issues/761
-          driver-opts: |
-            image=moby/buildkit:v0.10.6
+          driver-opts: image=moby/buildkit:v0.10.6
 
       - name: Fetch latest version
         id: version
@@ -491,6 +477,71 @@ jobs:
           build-args: |
             NODEJS_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
 
+  python:
+    name: Python
+    runs-on: ubuntu-22.04
+    needs:
+      - ubuntu
+    env:
+      REGISTRY_IMAGE_NAME: python
+      HUMAN_IMAGE_NAME: Python
+    strategy:
+      matrix:
+        version: [ '3' ]
+        distro: [ 'ubuntu' ]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+
+      - name: Login to GitHub Container Registry
+        if: ${{ github.event_name == 'push' && github.event.pull_request == null && !startsWith( github.ref, 'refs/heads/dependabot/' ) }}
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY_NAME }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/amd64
+          driver-opts: image=moby/buildkit:v0.10.6
+
+      - name: Clear context directory
+        run: rm --verbose --recursive ./context/*
+
+      - name: Create metadata for Docker image
+        id: metadata
+        uses: docker/metadata-action@v4
+        with:
+          flavor: latest=false
+          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
+          labels: |
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      - name: Build & push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: ${{ github.event_name == 'push' && github.event.pull_request == null && !startsWith( github.ref, 'refs/heads/dependabot/' ) }}
+          file: ./images/${{ matrix.distro }}/${{ github.job }}/dockerfile
+          context: ./context
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          no-cache: true
+          pull: true
+          build-args: |
+            PYTHON_VERSION=3.11.2
+            PYTHON_CHECKSUM=f6b5226ccba5ae1ca9376aaba0b0f673
+
   cleanup:
     name: Cleanup Registry
     runs-on: ubuntu-22.04
@@ -502,6 +553,7 @@ jobs:
       - dotnet
       - aspnetcore
       - nodejs
+      - python
     env:
       REGISTRY_NAME: ghcr.io
     permissions:
@@ -511,9 +563,9 @@ jobs:
       - name: Delete untagged Docker images
         uses: snok/container-retention-policy@v2
         with:
-          image-names: ubuntu,alpine,java,dotnet,aspnetcore,nodejs
+          image-names: ubuntu,alpine,java,dotnet,aspnetcore,nodejs,python
           cut-off: 0 seconds ago UTC
-          keep-at-least: 1
+          keep-at-least: 0
           untagged-only: true
           account-type: personal
           token: ${{ secrets.PAT_PACKAGES }}

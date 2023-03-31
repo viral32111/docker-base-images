@@ -1,0 +1,73 @@
+# syntax=docker/dockerfile:1
+
+# Start from Ubuntu, for the configuration stage
+FROM ghcr.io/viral32111/ubuntu:22.10 AS config
+
+# Configuration - https://www.python.org/downloads/source/
+ARG PYTHON_VERSION=3.11.2 \
+	PYTHON_CHECKSUM=f6b5226ccba5ae1ca9376aaba0b0f673 \
+	PYTHON_DIRECTORY=/usr/local/python
+
+###########################################################
+
+# Start from the configuration stage, for the build stage
+FROM config AS build
+
+# Install utilities & build dependencies from package repositories
+RUN apt-get update && \
+	apt-get install --no-install-recommends --yes \
+		wget \
+		build-essential pkg-config \
+		libssl-dev zlib1g-dev libbz2-dev liblzma-dev lzma-dev libffi-dev libgdbm-dev libgdbm-compat-dev libncurses5-dev libreadline-dev libsqlite3-dev \
+		tk-dev uuid-dev && \
+	apt-get clean --yes && \
+	rm --verbose --recursive /var/lib/apt/lists/*
+
+# Download & extract source code
+RUN mkdir --verbose --parents /tmp/python/source && \
+	wget --no-hsts --progress dot:mega --output-document /tmp/python.tar.gz https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz 2>&1 && \
+	echo "${PYTHON_CHECKSUM} /tmp/python.tar.gz" | md5sum --check && \
+	tar --verbose --extract --no-same-owner --strip-components 1 --file /tmp/python.tar.gz --directory /tmp/python/source && \
+	rm --verbose --recursive /tmp/python.tar.gz
+
+# Build source code & install
+RUN mkdir --verbose --parents /tmp/python/build && \
+	cd /tmp/python/build && \
+	/tmp/python/source/configure \
+		--prefix=${PYTHON_DIRECTORY} \
+		--sysconfdir=/etc \
+		--runstatedir=/run \
+		--localstatedir=/var \
+		--enable-optimizations \
+		--with-ensurepip=install && \
+	make --directory /tmp/python/build --jobs 12 && \
+	make --directory /tmp/python/build --jobs 12 install && \
+	rm --verbose --recursive \
+		${PYTHON_DIRECTORY}/share \
+		/tmp/python/build
+
+###########################################################
+
+# Start from the configuration stage, for the final stage
+FROM config
+
+# Install runtime dependencies
+RUN apt-get update && \
+	apt-get install --no-install-recommends --yes \
+		libssl3 zlib1g libbz2-1.0 liblzma5 lzma libffi8 libgdbm6 libgdbm-compat4 libncurses5 libreadline8 libsqlite3-0 \
+		tk uuid && \
+	apt-get clean --yes && \
+	rm --verbose --recursive /var/lib/apt/lists/*
+
+# Copy artifact from build stage
+COPY --from=build --chown=0:0 ${PYTHON_DIRECTORY} ${PYTHON_DIRECTORY}
+
+# Add installation to the system paths
+ENV PATH=${PYTHON_DIRECTORY}/bin:$PATH \
+	LD_LIBRARY_PATH=${PYTHON_DIRECTORY}/lib:$LD_LIBRARY_PATH
+
+# Upgrade stock Python packages
+RUN pip3 install --no-cache-dir --upgrade pip setuptools
+
+# Run commands with Python
+ENTRYPOINT [ "python3" ]

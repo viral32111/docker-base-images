@@ -37,7 +37,7 @@ jobs:
       HUMAN_IMAGE_NAME: Ubuntu
     strategy:
       matrix:
-        version: [ '20.04', '22.04', '22.10' ]
+        version: [ '18.04', '20.04', '22.04', '22.10' ]
     permissions:
       contents: read
       packages: write

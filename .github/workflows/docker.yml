@@ -67,7 +67,7 @@ jobs:
           echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_OUTPUT
 
           export DATE_TODAY=$(date +'%Y-%m-%d')
-          export LATEST_VERSION=$(curl -s https://api.launchpad.net/1.0/ubuntu/${VERSION_NAME}/all_milestones | jq --arg today ${DATE_TODAY} -r '[ .entries[] | select( ( .name | endswith( "-updates" ) | not ) and ( .name | endswith( "20.04.6" ) | not ) and ( .date_targeted <= $today ) ) ][ 0 ].name' | sed --regexp-extended 's/^ubuntu-//g')
+          export LATEST_VERSION=$(curl -s https://api.launchpad.net/1.0/ubuntu/${VERSION_NAME}/all_milestones | jq --arg today ${DATE_TODAY} -r '[ .entries[] | select( ( .name | endswith( "-updates" ) | not ) and ( .name | endswith( "20.04.6" ) | not ) and ( .name | endswith( "18.04.6" ) | not ) and ( .date_targeted <= $today ) ) ][ 0 ].name' | sed --regexp-extended 's/^ubuntu-//g')
           echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
           wget --output-document ./context/ubuntu.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.version }}/release/ubuntu-base-${LATEST_VERSION}-base-amd64.tar.gz

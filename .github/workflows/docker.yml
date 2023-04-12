@@ -510,6 +510,10 @@ jobs:
           platforms: linux/amd64
           driver-opts: image=moby/buildkit:v0.10.6
 
+      - name: Fetch latest version
+        id: version
+        run: echo "LATEST_VERSION=$(curl -s https://endoflife.date/api/python.json | jq -r --arg MAJOR ${{ matrix.version }} '[ .[] | select ( .cycle | startswith( $MAJOR + "." ) ) ][ 0 ].latest')" >> $GITHUB_OUTPUT
+
       - name: Clear context directory
         run: rm --verbose --recursive ./context/*
 
@@ -525,7 +529,7 @@ jobs:
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=3.11.2
+            org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
       - name: Build & push Docker image
@@ -536,11 +540,9 @@ jobs:
           context: ./context
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          build-args: PYTHON_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
           no-cache: true
           pull: true
-          build-args: |
-            PYTHON_VERSION=3.11.2
-            PYTHON_CHECKSUM=f6b5226ccba5ae1ca9376aaba0b0f673
 
   cleanup:
     name: Cleanup Registry

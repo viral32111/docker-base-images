@@ -4,8 +4,7 @@
 FROM ghcr.io/viral32111/ubuntu:22.10 AS config
 
 # Configuration - https://www.python.org/downloads/source/
-ARG PYTHON_VERSION=3.11.2 \
-	PYTHON_CHECKSUM=f6b5226ccba5ae1ca9376aaba0b0f673 \
+ARG PYTHON_VERSION=3.11.3 \
 	PYTHON_DIRECTORY=/usr/local/python
 
 ###########################################################
@@ -26,7 +25,6 @@ RUN apt-get update && \
 # Download & extract source code
 RUN mkdir --verbose --parents /tmp/python/source && \
 	wget --no-hsts --progress dot:mega --output-document /tmp/python.tar.gz https://www.python.org/ftp/python/${PYTHON_VERSION}/Python-${PYTHON_VERSION}.tgz 2>&1 && \
-	echo "${PYTHON_CHECKSUM} /tmp/python.tar.gz" | md5sum --check && \
 	tar --verbose --extract --no-same-owner --strip-components 1 --file /tmp/python.tar.gz --directory /tmp/python/source && \
 	rm --verbose --recursive /tmp/python.tar.gz
 

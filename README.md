@@ -17,6 +17,7 @@ The following changes have been made within these images:
  * Installed public CA certificates & my [personal root CA certificate](context/viral32111.crt).
  * Installed my [container healthcheck](https://github.com/viral32111/healthcheck) utility.
  * Created a standard, unprivileged user & group (UID & GID: `1000`).
+ * Added local user binaries to the system path.
  * Disabled writing shell history to file.
 
 | Title | Version | Image name & tag | Note |

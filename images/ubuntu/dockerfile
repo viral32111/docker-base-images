@@ -37,10 +37,11 @@ RUN apt-get update && \
 		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${UBUNTU_VERSION_NAME}-backports main restricted universe multiverse" \
 		"deb http://security.ubuntu.com/ubuntu/ ${UBUNTU_VERSION_NAME}-security main restricted universe multiverse" | tee /etc/apt/sources.list
 
-# Configure the regular user, character encoding, language, timezone & shell history
+# Configure the regular user, locale & shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \
+	PATH=/root/.local/bin:/home/user/.local/bin:$PATH \
 	CHARSET=UTF-8 \
 	LC_ALL=en_GB.UTF-8 \
 	LANG=en_GB.UTF-8 \

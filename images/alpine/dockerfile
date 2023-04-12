@@ -25,10 +25,11 @@ RUN apk upgrade --no-cache && \
 		"https://uk.alpinelinux.org/alpine/v${ALPINE_BRANCH}/main" \
 		"https://uk.alpinelinux.org/alpine/v${ALPINE_BRANCH}/community" | tee /etc/apk/repositories
 
-# Configure the regular user, character encoding, language, timezone & shell history
+# Configure the regular user, locale & shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \
+	PATH=/root/.local/bin:/home/user/.local/bin:$PATH \
 	CHARSET=UTF-8 \
 	LC_ALL=en_GB.UTF-8 \
 	LANG=en_GB.UTF-8 \

@@ -81,32 +81,38 @@ jobs:
             if ( !releaseName ) throw new Error( `No name for release ${ RELEASE }!` );
             console.log( `Release name is '${ releaseName }'.` );
 
-            const milestonesResponse = await fetch( `https://api.launchpad.net/1.0/ubuntu/${ releaseName }/active_milestones` );
+            const milestonesResponse = await fetch( `https://api.launchpad.net/1.0/ubuntu/${ releaseName }/all_milestones` );
             const milestonesData = await milestonesResponse.json();
             if ( !milestonesData ) throw new Error( `No milestones available for release ${ RELEASE } (${ releaseName })!` );
             console.log( `Fetched milestone data for release '${ RELEASE }' (${ releaseName }).` );
 
             let milestoneCode = null;
             for ( const milestoneData of milestonesData.entries ) {
-              milestoneCode = milestoneData.name.replace( 'ubuntu-', '' );
+              const milestoneName = milestoneData.name.replace( 'ubuntu-', '' );
 
-              console.log( `Checking download link for milestone '${ milestoneCode }'...` );
-              const downloadResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/ubuntu-base-${ milestoneCode }-base-amd64.tar.gz`, {
+              if ( milestoneName.endsWith( '-updates' ) ) {
+                console.warn( `Skipping milestone '${ milestoneName }'...` );
+                continue;
+              }
+
+              console.log( `Checking download link for milestone '${ milestoneName }'...` );
+              const downloadResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/ubuntu-base-${ milestoneName }-base-amd64.tar.gz`, {
                 method: 'HEAD'
               } );
 
               if ( downloadResponse.ok ) {
-                console.log( `Valid download link for milestone '${ milestoneCode }'.` );
+                console.log( `Valid download link for milestone '${ milestoneName }'.` );
+                milestoneCode = milestoneName;
                 break;
               } else {
-                console.warn( `Invalid download link for milestone '${ milestoneCode }' (HTTP ${ downloadResponse.status } ${ downloadResponse.statusText }).` );
+                console.warn( `Invalid download link for milestone '${ milestoneName }' (${ downloadResponse.status } ${ downloadResponse.statusText }).` );
               }
             }
             if ( !milestoneCode ) throw new Error( `Could not determine version code for release ${ RELEASE } (${ releaseName })!` );
             console.log( `Milestone code is '${ milestoneCode }'.` );
 
             const checksumsResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/SHA256SUMS` );
-            const checksumsText = await response.text();
+            const checksumsText = await checksumsResponse.text();
             if ( !checksumsText ) throw new Error( 'No download checksums available!' );
             console.log( 'Fetched SHA-256 checksums for downloads.' );
 

@@ -1,8 +1,8 @@
-# This workflow builds all of the Docker images.
+# This workflow builds all of my Docker base images.
 
 name: Docker
 
-# Run when relevant files change, and every week
+# Run every Sunday, or when relevant files are updated
 on:
   push:
     paths:
@@ -18,14 +18,14 @@ on:
     - cron: '0 1 * * 0'
   workflow_dispatch:
 
-# Cancel any previously running workflows
+# Cancel any on-going workflow runs
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
 
 # Variables available in all jobs
 env:
-  REGISTRY_NAME: ghcr.io
+  REGISTRY_DOMAIN: ghcr.io
   PUBLISHER_WEBSITE: https://viral32111.com
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
       HUMAN_IMAGE_NAME: Ubuntu
     strategy:
       matrix:
-        version: [ '18.04', '20.04', '22.04', '22.10' ]
+        release: [ '18.04', '20.04', '22.04', '22.10', '23.04' ]
     permissions:
       contents: read
       packages: write
@@ -46,10 +46,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
-        if: github.event_name != 'pull_request' && github.ref_name == 'main'
+        if: ${{ github.event_name == 'push' && github.event.pull_request == null && !startsWith( github.ref, 'refs/heads/dependabot/' ) }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_NAME }}
+          registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -57,33 +57,68 @@ jobs:
         uses: docker/setup-buildx-action@v2
         with:
           platforms: linux/amd64
-          driver-opts: image=moby/buildkit:v0.10.6
 
-      # 20.04.6 is disabled for now as it has no base image available
-      - name: Fetch & download latest version
+      - name: Fetch latest version
         id: version
+        uses: actions/github-script@v6
+        env:
+          RELEASE: ${{ matrix.release }}
+        with:
+          script: |
+            const { RELEASE } = process.env;
+
+            const seriesResponse = await fetch( 'https://api.launchpad.net/1.0/ubuntu/series' );
+            const seriesData = await seriesResponse.json();
+            if ( !seriesData ) throw new Error( 'No series data available' );
+
+            const releaseData = seriesData.entries.filter( entry => entry.version === RELEASE );
+            if ( !releaseData ) throw new Error( `No data available for release ${ RELEASE }` );
+            const releaseName = releaseData.name;
+
+            const milestonesResponse = await fetch( `https://api.launchpad.net/1.0/ubuntu/${ releaseName }/active_milestones` );
+            const milestonesData = await milestonesResponse.json();
+            if ( !milestonesData ) throw new Error( `No milestones available for release ${ RELEASE } (${ releaseName })` );
+
+            let milestoneCode = null;
+            for ( const milestoneData in milestonesData.entries ) {
+              milestoneCode = milestoneData.name.replace( 'ubuntu-', '' );
+
+              const downloadResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/ubuntu-base-${ milestoneCode }-base-amd64.tar.gz`, {
+                method: 'HEAD'
+              } );
+
+              if ( downloadResponse.ok ) break;
+            }
+            if ( !milestoneCode ) throw new Error( `Could not determine version code for release ${ RELEASE } (${ releaseName })` );
+
+            const checksumsResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/SHA256SUMS` );
+            const checksumsText = await response.text();
+            if ( !checksumsText ) throw new Error( 'No download checksums available' );
+
+            const checksumLine = checksumsText.split( '\n' ).filter( line => line.endsWith( `*ubuntu-base-${ milestoneCode }-base-amd64.tar.gz` ) );
+            const checksum = checksumLine.split( ' ', 2 )[ 0 ];
+
+            core.setOutput( 'name', releaseName )
+            core.setOutput( 'code', milestoneCode )
+            core.setOutput( 'checksum', checksum )
+
+      - name: Download latest version
         run: |
-          export VERSION_NAME=$(curl -s https://api.launchpad.net/1.0/ubuntu/series | jq -r '.entries[] | select( .version == "${{ matrix.version }}" ) | .name')
-          echo "VERSION_NAME=${VERSION_NAME}" >> $GITHUB_OUTPUT
-
-          export DATE_TODAY=$(date +'%Y-%m-%d')
-          export LATEST_VERSION=$(curl -s https://api.launchpad.net/1.0/ubuntu/${VERSION_NAME}/all_milestones | jq --arg today ${DATE_TODAY} -r '[ .entries[] | select( ( .name | endswith( "-updates" ) | not ) and ( .name | endswith( "20.04.6" ) | not ) and ( .name | endswith( "18.04.6" ) | not ) and ( .date_targeted <= $today ) ) ][ 0 ].name' | sed --regexp-extended 's/^ubuntu-//g')
-          echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
-
-          wget --output-document ./context/ubuntu.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.version }}/release/ubuntu-base-${LATEST_VERSION}-base-amd64.tar.gz
+          wget --output-document ./context/ubuntu.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.release }}/release/ubuntu-base-${{ steps.version.outputs.code }}-base-amd64.tar.gz
+          echo "${{ steps.version.outputs.checksum }} ./context/ubuntu.tar.gz" | sha256sum --check
 
       - name: Create metadata for Docker image
         id: metadata
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
-          tags: type=raw,value=${{ matrix.version }}
+          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          tags: type=raw,value=${{ matrix.release }}
           labels: |
-            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
-            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }}
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.release }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }} ( ${{ steps.version.outputs.name }} )
             org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            org.opencontainers.image.version=${{ steps.version.outputs.code }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
       - name: Build & push Docker image
@@ -91,13 +126,13 @@ jobs:
         with:
           push: ${{ github.event_name != 'pull_request' && github.ref_name == 'main' }}
           file: ./images/ubuntu/dockerfile
-          context: ./context
+          context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          platforms: linux/amd64
+          provenance: false
           no-cache: true
           pull: true
-          build-args: |
-            UBUNTU_VERSION_NAME=${{ steps.version.outputs.VERSION_NAME }}
 
   alpine:
     name: Alpine Linux
@@ -119,7 +154,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_NAME }}
+          registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -142,7 +177,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: type=raw,value=${{ matrix.version }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
@@ -188,7 +223,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_NAME }}
+          registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -238,7 +273,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
@@ -286,7 +321,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_NAME }}
+          registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -310,7 +345,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
@@ -358,7 +393,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_NAME }}
+          registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -382,7 +417,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
@@ -429,7 +464,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_NAME }}
+          registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -453,7 +488,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'ubuntu' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
@@ -500,7 +535,7 @@ jobs:
         if: ${{ github.event_name == 'push' && github.event.pull_request == null && !startsWith( github.ref, 'refs/heads/dependabot/' ) }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_NAME }}
+          registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -522,7 +557,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |

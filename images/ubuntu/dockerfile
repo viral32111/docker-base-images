@@ -1,21 +1,19 @@
 # syntax=docker/dockerfile:1
 
-# https://cdimage.ubuntu.com/ubuntu-base/releases/22.10/release/
-
 # Start from nothing
 FROM scratch
 
-# Configure versions
-ARG UBUNTU_VERSION_NAME=kinetic \
-	HEALTHCHECK_VERSION=2.0.0
+# Configure the version of my container healthcheck utility
+ARG HEALTHCHECK_VERSION=2.0.0
 
-# Extract the root filesystem
+# Extract the root filesystem & use Bash as the shell
 ADD --chown=0:0 ./ubuntu.tar.gz /
+SHELL [ "/bin/bash", "-c" ]
 
 # Add my personal CA root certificate
 COPY --chown=0:0 --chmod=644 ./viral32111.crt /usr/local/share/ca-certificates/viral32111.crt
 
-# Upgrade packages, install common base packages, create empty directory, switch to secure package repository mirror hosted in the United Kingdom
+# Update packages & install commonly used base packages
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
 	apt-get upgrade --yes && \
@@ -29,15 +27,21 @@ RUN apt-get update && \
 		"en_US.UTF-8 UTF-8" | tee /etc/locale.gen && \
 	locale-gen && \
 	apt-get clean --yes && \
-	rm --verbose --force --recursive /var/lib/apt/lists/* && \
-	mkdir --verbose --parents /var/empty && \
-	printf "%s\n%s\n%s\n%s\n" \
-		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${UBUNTU_VERSION_NAME} main restricted universe multiverse" \
-		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${UBUNTU_VERSION_NAME}-updates main restricted universe multiverse" \
-		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${UBUNTU_VERSION_NAME}-backports main restricted universe multiverse" \
-		"deb http://security.ubuntu.com/ubuntu/ ${UBUNTU_VERSION_NAME}-security main restricted universe multiverse" | tee /etc/apt/sources.list
+	rm --verbose --force --recursive /var/lib/apt/lists/*
 
-# Configure the regular user, locale & shell history
+# Create the read-only empty directory
+RUN mkdir --verbose --parents /var/empty && \
+	chmod --changes 555 /var/empty
+
+# Switch to secure package repository mirror hosted in the United Kingdom
+RUN source /etc/os-release && \
+	printf "%s\n%s\n%s\n%s\n" \
+		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME} main restricted universe multiverse" \
+		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-updates main restricted universe multiverse" \
+		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-backports main restricted universe multiverse" \
+		"deb http://security.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-security main restricted universe multiverse" | tee /etc/apt/sources.list
+
+# Set the regular user, locale & shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \
@@ -61,5 +65,4 @@ ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/d
 WORKDIR ${USER_HOME}
 
 # Start a shell by default
-SHELL [ "/bin/bash", "-c" ]
 CMD [ "/bin/bash" ]

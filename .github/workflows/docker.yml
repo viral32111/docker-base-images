@@ -138,7 +138,7 @@ jobs:
           tags: type=raw,value=${{ matrix.release }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.release }}
-            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }} ( ${{ steps.version.outputs.name }} )
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }} (${{ steps.version.outputs.name }})
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.code }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}

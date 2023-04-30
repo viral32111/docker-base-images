@@ -55,7 +55,8 @@ ENV USER_ID=1000 \
 
 # Create the regular user
 RUN mkdir --verbose --parents ${USER_HOME} && \
-	adduser --system --disabled-password --disabled-login --shell /usr/sbin/nologin --no-create-home --home ${USER_HOME} --gecos ${USER_NAME} --group --uid ${USER_ID} ${USER_NAME} && \
+	groupadd --system --gid ${USER_ID} ${USER_NAME} && \
+	useradd --system --shell /usr/sbin/nologin --home ${USER_HOME} --comment ${USER_NAME} --gid ${USER_ID} ${USER_NAME} && \
 	chown --changes --recursive ${USER_ID}:${USER_ID} ${USER_HOME}
 
 # Download my container healthcheck utility

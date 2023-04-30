@@ -101,11 +101,11 @@ jobs:
               } );
 
               if ( downloadResponse.ok ) {
-                console.log( `Valid download link for milestone '${ milestoneName }'.` );
+                console.log( ` Valid download link for milestone '${ milestoneName }'.` );
                 milestoneCode = milestoneName;
                 break;
               } else {
-                console.warn( `Invalid download link for milestone '${ milestoneName }' (${ downloadResponse.status } ${ downloadResponse.statusText }).` );
+                console.warn( ` Invalid download link for milestone '${ milestoneName }' (${ downloadResponse.status } ${ downloadResponse.statusText }).` );
               }
             }
             if ( !milestoneCode ) throw new Error( `Could not determine version code for release ${ RELEASE } (${ releaseName })!` );
@@ -126,7 +126,7 @@ jobs:
 
       - name: Download latest version
         run: |
-          wget --output-document ./context/ubuntu.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.release }}/release/ubuntu-base-${{ steps.version.outputs.code }}-base-amd64.tar.gz
+          wget --progress dot:mega --output-document ./context/ubuntu.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.release }}/release/ubuntu-base-${{ steps.version.outputs.code }}-base-amd64.tar.gz
           echo "${{ steps.version.outputs.checksum }} ./context/ubuntu.tar.gz" | sha256sum --check
 
       - name: Create metadata for Docker image

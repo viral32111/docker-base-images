@@ -71,7 +71,7 @@ jobs:
             const seriesResponse = await fetch( 'https://api.launchpad.net/1.0/ubuntu/series' );
             const seriesData = await seriesResponse.json();
             if ( !seriesData ) throw new Error( 'No series data available' );
-            console.log( 'Fetched series data for release '${ RELEASE }'.` );
+            console.log( `Fetched series data for release '${ RELEASE }'.` );
 
             const releaseData = seriesData.entries.filter( entry => entry.version == RELEASE );
             if ( !releaseData ) throw new Error( `No data available for release ${ RELEASE }!` );
@@ -103,7 +103,7 @@ jobs:
               }
             }
             if ( !milestoneCode ) throw new Error( `Could not determine version code for release ${ RELEASE } (${ releaseName })!` );
-            console.log( 'Milestone code is \'%s\'.', milestoneCode );
+            console.log( `Milestone code is '${ milestoneCode }'.` );
 
             const checksumsResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/SHA256SUMS` );
             const checksumsText = await response.text();
@@ -112,11 +112,11 @@ jobs:
 
             const checksumLine = checksumsText.split( '\n' ).filter( line => line.endsWith( `*ubuntu-base-${ milestoneCode }-base-amd64.tar.gz` ) );
             const checksum = checksumLine.split( ' ', 2 )[ 0 ];
-            console.log( 'SHA-256 checksum for download is '${ checksum }'.` );
+            console.log( `SHA-256 checksum for download is '${ checksum }'.` );
 
-            core.setOutput( 'name', releaseName )
-            core.setOutput( 'code', milestoneCode )
-            core.setOutput( 'checksum', checksum )
+            core.setOutput( 'name', releaseName );
+            core.setOutput( 'code', milestoneCode );
+            core.setOutput( 'checksum', checksum );
 
       - name: Download latest version
         run: |

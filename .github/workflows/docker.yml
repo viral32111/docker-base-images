@@ -66,37 +66,53 @@ jobs:
         with:
           script: |
             const { RELEASE } = process.env;
+            console.log( `Release is '${ RELEASE }'.` );
 
             const seriesResponse = await fetch( 'https://api.launchpad.net/1.0/ubuntu/series' );
             const seriesData = await seriesResponse.json();
             if ( !seriesData ) throw new Error( 'No series data available' );
+            console.log( 'Fetched series data for release '${ RELEASE }'.` );
 
-            const releaseData = seriesData.entries.filter( entry => entry.version === RELEASE );
-            if ( !releaseData ) throw new Error( `No data available for release ${ RELEASE }` );
-            const releaseName = releaseData.name;
+            const releaseData = seriesData.entries.filter( entry => entry.version == RELEASE );
+            if ( !releaseData ) throw new Error( `No data available for release ${ RELEASE }!` );
+            console.log( `Filtered release data.` );
+
+            const releaseName = releaseData[ 0 ].name;
+            if ( !releaseName ) throw new Error( `No name for release ${ RELEASE }!` );
+            console.log( `Release name is '${ releaseName }'.` );
 
             const milestonesResponse = await fetch( `https://api.launchpad.net/1.0/ubuntu/${ releaseName }/active_milestones` );
             const milestonesData = await milestonesResponse.json();
-            if ( !milestonesData ) throw new Error( `No milestones available for release ${ RELEASE } (${ releaseName })` );
+            if ( !milestonesData ) throw new Error( `No milestones available for release ${ RELEASE } (${ releaseName })!` );
+            console.log( `Fetched milestone data for release '${ RELEASE }' (${ releaseName }).` );
 
             let milestoneCode = null;
             for ( const milestoneData in milestonesData.entries ) {
               milestoneCode = milestoneData.name.replace( 'ubuntu-', '' );
 
+              console.log( `Checking download link for milestone '${ milestoneCode }'...` );
               const downloadResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/ubuntu-base-${ milestoneCode }-base-amd64.tar.gz`, {
                 method: 'HEAD'
               } );
 
-              if ( downloadResponse.ok ) break;
+              if ( downloadResponse.ok ) {
+                console.log( `Valid download link for milestone '${ milestoneCode }'.` );
+                break;
+              } else {
+                console.warn( `Invalid download link for milestone '${ milestoneCode }' (HTTP ${ downloadResponse.status } ${ downloadResponse.statusText }).` );
+              }
             }
-            if ( !milestoneCode ) throw new Error( `Could not determine version code for release ${ RELEASE } (${ releaseName })` );
+            if ( !milestoneCode ) throw new Error( `Could not determine version code for release ${ RELEASE } (${ releaseName })!` );
+            console.log( 'Milestone code is \'%s\'.', milestoneCode );
 
             const checksumsResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/SHA256SUMS` );
             const checksumsText = await response.text();
-            if ( !checksumsText ) throw new Error( 'No download checksums available' );
+            if ( !checksumsText ) throw new Error( 'No download checksums available!' );
+            console.log( 'Fetched SHA-256 checksums for downloads.' );
 
             const checksumLine = checksumsText.split( '\n' ).filter( line => line.endsWith( `*ubuntu-base-${ milestoneCode }-base-amd64.tar.gz` ) );
             const checksum = checksumLine.split( ' ', 2 )[ 0 ];
+            console.log( 'SHA-256 checksum for download is '${ checksum }'.` );
 
             core.setOutput( 'name', releaseName )
             core.setOutput( 'code', milestoneCode )

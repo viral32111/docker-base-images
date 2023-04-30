@@ -73,11 +73,11 @@ jobs:
             if ( !seriesData ) throw new Error( 'No series data available' );
             console.log( `Fetched series data for release '${ RELEASE }'.` );
 
-            const releaseData = seriesData.entries.filter( entry => entry.version == RELEASE );
+            const releaseData = seriesData.entries.filter( entry => entry.version == RELEASE )[ 0 ];
             if ( !releaseData ) throw new Error( `No data available for release ${ RELEASE }!` );
             console.log( `Filtered release data.` );
 
-            const releaseName = releaseData[ 0 ].name;
+            const releaseName = releaseData.name;
             if ( !releaseName ) throw new Error( `No name for release ${ RELEASE }!` );
             console.log( `Release name is '${ releaseName }'.` );
 
@@ -87,7 +87,7 @@ jobs:
             console.log( `Fetched milestone data for release '${ RELEASE }' (${ releaseName }).` );
 
             let milestoneCode = null;
-            for ( const milestoneData in milestonesData.entries ) {
+            for ( const milestoneData of milestonesData.entries ) {
               milestoneCode = milestoneData.name.replace( 'ubuntu-', '' );
 
               console.log( `Checking download link for milestone '${ milestoneCode }'...` );
@@ -110,7 +110,7 @@ jobs:
             if ( !checksumsText ) throw new Error( 'No download checksums available!' );
             console.log( 'Fetched SHA-256 checksums for downloads.' );
 
-            const checksumLine = checksumsText.split( '\n' ).filter( line => line.endsWith( `*ubuntu-base-${ milestoneCode }-base-amd64.tar.gz` ) );
+            const checksumLine = checksumsText.split( '\n' ).filter( line => line.endsWith( `*ubuntu-base-${ milestoneCode }-base-amd64.tar.gz` ) )[ 0 ];
             const checksum = checksumLine.split( ' ', 2 )[ 0 ];
             console.log( `SHA-256 checksum for download is '${ checksum }'.` );
 

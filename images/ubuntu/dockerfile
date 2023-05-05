@@ -56,7 +56,7 @@ ENV USER_ID=1000 \
 # Create the regular user
 RUN mkdir --verbose --parents ${USER_HOME} && \
 	groupadd --system --gid ${USER_ID} ${USER_NAME} && \
-	useradd --system --shell /usr/sbin/nologin --home ${USER_HOME} --comment ${USER_NAME} --gid ${USER_ID} ${USER_NAME} && \
+	useradd --system --shell /usr/sbin/nologin --home ${USER_HOME} --comment ${USER_NAME} --uid ${USER_ID} --gid ${USER_ID} ${USER_NAME} && \
 	chown --changes --recursive ${USER_ID}:${USER_ID} ${USER_HOME}
 
 # Download my container healthcheck utility

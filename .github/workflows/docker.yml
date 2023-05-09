@@ -204,11 +204,20 @@ jobs:
             let currentRelease = new Map();
             for ( let line of latestReleasesYAML.split( '\n' ) ) {
               line = line.trim();
+              if ( line === '' ) {
+                console.warn( `Skipping empty line...` );
+                continue;
+              }
 
               if ( line.match( /^\s*-\s*/ ) !== null ) {
-                latestReleases.push( currentRelease );
-                console.log( `Parsed latest release with '${ currentRelease.size }' properties.'` )
-                currentRelease = new Map();
+                if ( currentRelease.size > 0 ) {
+                  latestReleases.push( currentRelease );
+                  console.log( `Parsed latest release with '${ currentRelease.size }' properties.'` )
+                  currentRelease = new Map();
+                } else {
+                  console.warn( `Ignoring empty release...` );
+                }
+
               } else {
                 const lineMatch = line.match( /^\s*([\w\d_]+)\:\s*(.+)$/ );
                 if ( lineMatch !== null ) {
@@ -223,8 +232,8 @@ jobs:
             if ( latestReleases.length <= 0 ) throw new Error( 'No latest releases parsed!' );
             console.log( `Parsed '${ latestReleases.length }' latest releases.` );
 
-            const latestRelease = latestReleases.find( release => release.get( 'flavour' ) === 'alpine-minirootfs' );
-            if ( !latestRelease ) throw new Error( 'No root filesystem release found!' );
+            const latestRelease = latestReleases.find( release => release.get( 'flavor' ) == 'alpine-minirootfs' );
+            if ( !latestRelease ) throw new Error( 'No latest release found!' );
             console.log( `Latest release is '${ latestRelease.get( 'version' ) }' with SHA-256 checksum '${ latestRelease.get( 'sha256' ) }'.` );
 
             core.setOutput( 'code', latestRelease.get( 'version' ) );

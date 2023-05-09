@@ -1,31 +1,37 @@
 # syntax=docker/dockerfile:1
 
-# https://alpinelinux.org/downloads/
-
 # Start from nothing
 FROM scratch
 
-# Configure versions
-ARG ALPINE_BRANCH=3.17 \
-	HEALTHCHECK_VERSION=2.0.0
+# Configure the version of my container healthcheck utility
+ARG HEALTHCHECK_VERSION=2.0.0
 
-# Extract the root filesystem
+# Extract the root filesystem & use standard shell
 ADD --chown=0:0 ./alpine.tar.gz /
+SHELL [ "/bin/sh", "-c" ]
 
 # Add my personal CA root certificate
 COPY --chown=0:0 --chmod=644 ./viral32111.crt /usr/local/share/ca-certificates/viral32111.crt
 
-# Upgrade packages, install common base packages & switch to a package repository mirror hosted in the United Kingdom
+# Update packages & install commonly used base packages
 RUN apk upgrade --no-cache && \
 	apk add --no-cache ca-certificates tzdata musl-locales musl-locales-lang && \
 	cp -v -a /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
 	printf "Etc/UTC" | tee /etc/timezone && \
 	apk del --no-cache tzdata && \
-	printf "%s\n%s\n" \
-		"https://uk.alpinelinux.org/alpine/v${ALPINE_BRANCH}/main" \
-		"https://uk.alpinelinux.org/alpine/v${ALPINE_BRANCH}/community" | tee /etc/apk/repositories
 
-# Configure the regular user, locale & shell history
+# Create the read-only empty directory
+RUN mkdir --verbose --parents /var/empty && \
+	chmod --changes 555 /var/empty
+
+# Switch to the package repository mirror hosted in the United Kingdom
+RUN source /etc/os-release && \
+	export RELEASE=$(echo ${VERSION_ID} | grep -Eo '[0-9]\.[0-9]+') && \
+	printf "%s\n%s\n" \
+		"https://uk.alpinelinux.org/alpine/v${RELEASE}/main" \
+		"https://uk.alpinelinux.org/alpine/v${RELEASE}/community" | tee /etc/apk/repositories
+
+# Set the regular user, locale & shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \
@@ -50,4 +56,4 @@ ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/d
 WORKDIR ${USER_HOME}
 
 # Start a shell by default
-CMD [ "sh" ]
+CMD [ "/bin/sh" ]

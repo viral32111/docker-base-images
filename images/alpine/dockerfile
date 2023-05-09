@@ -21,8 +21,8 @@ RUN apk upgrade --no-cache && \
 	apk del --no-cache tzdata
 
 # Create the read-only empty directory
-RUN mkdir --verbose --parents /var/empty && \
-	chmod --changes 555 /var/empty
+RUN mkdir -v -p /var/empty && \
+	chmod -c 555 /var/empty
 
 # Switch to the package repository mirror hosted in the United Kingdom
 RUN source /etc/os-release && \

@@ -18,7 +18,7 @@ RUN apk upgrade --no-cache && \
 	apk add --no-cache ca-certificates tzdata musl-locales musl-locales-lang && \
 	cp -v -a /usr/share/zoneinfo/Etc/UTC /etc/localtime && \
 	printf "Etc/UTC" | tee /etc/timezone && \
-	apk del --no-cache tzdata && \
+	apk del --no-cache tzdata
 
 # Create the read-only empty directory
 RUN mkdir --verbose --parents /var/empty && \

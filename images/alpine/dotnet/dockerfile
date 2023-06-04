@@ -7,7 +7,7 @@
 FROM ghcr.io/viral32111/alpine:3.17
 
 # Configure version & directory
-ARG DOTNET_VERSION=7.0.4 \
+ARG DOTNET_VERSION=7.0.5 \
 	DOTNET_DIRECTORY=/opt/dotnet
 
 # Download & install ASP.NET Core Runtime

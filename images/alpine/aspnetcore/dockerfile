@@ -7,7 +7,7 @@
 FROM ghcr.io/viral32111/alpine:3.17
 
 # Configure version & directory
-ARG ASPNETCORE_VERSION=7.0.4 \
+ARG ASPNETCORE_VERSION=7.0.5 \
 	ASPNETCORE_DIRECTORY=/opt/aspnetcore
 
 # Download & install ASP.NET Core Runtime

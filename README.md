@@ -33,6 +33,7 @@ The following changes have been made within these images:
 | ~~[Alpine Linux 3.15](https://alpinelinux.org/)~~ | ~~3.15.6~~ | ~~[`ghcr.io/viral32111/alpine:3.15`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine)~~ | Deprecated. |
 | [Alpine Linux 3.16](https://alpinelinux.org/) | 3.16.5 | [`ghcr.io/viral32111/alpine:3.16`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 | [Alpine Linux 3.17](https://alpinelinux.org/) | 3.17.3 | [`ghcr.io/viral32111/alpine:3.17`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
+| [Alpine Linux 3.18](https://alpinelinux.org/) | 3.18.0 | [`ghcr.io/viral32111/alpine:3.18`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 
 ## Java
 
@@ -55,13 +56,13 @@ These images are based on both Ubuntu 22.10 and Alpine Linux 3.17.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
-| [.NET Runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) | 6.0.15 | [`ghcr.io/viral32111/dotnet:6.0`](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet) | |
-| [.NET Runtime 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | 7.0.4 | [`ghcr.io/viral32111/dotnet:7.0`](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet) | |
+| [.NET Runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) | 6.0.16 | [`ghcr.io/viral32111/dotnet:6`](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet) | |
+| [.NET Runtime 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | 7.0.5 | [`ghcr.io/viral32111/dotnet:7`](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet) | |
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
-| [ASP.NET Core Runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) | 6.0.15 | [`ghcr.io/viral32111/aspnetcore:6.0`](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore) | |
-| [ASP.NET Core Runtime 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | 7.0.4 | [`ghcr.io/viral32111/aspnetcore:7.0`](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore) | |
+| [ASP.NET Core Runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) | 6.0.16 | [`ghcr.io/viral32111/aspnetcore:6`](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore) | |
+| [ASP.NET Core Runtime 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | 7.0.5 | [`ghcr.io/viral32111/aspnetcore:7`](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore) | |
 
 ## Node.js
 

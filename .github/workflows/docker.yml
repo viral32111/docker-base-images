@@ -454,7 +454,7 @@ jobs:
       HUMAN_IMAGE_NAME: ASP.NET Core Runtime
     strategy:
       matrix:
-        version: [ '6.0', '7.0' ]
+        version: [ '6', '7' ]
         distro: [ 'ubuntu', 'alpine' ]
     permissions:
       contents: read
@@ -479,7 +479,7 @@ jobs:
       - name: Fetch latest version
         id: version
         run: |
-          LATEST_VERSION=$(curl --silent "https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${{ matrix.version }}/latest.version")
+          LATEST_VERSION=$(curl --silent "https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${{ matrix.version }}.0/latest.version")
           echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Clear context directory
@@ -493,9 +493,11 @@ jobs:
           images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
+            type=raw,value=${{ matrix.version }}.0,enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
+            type=raw,value=${{ matrix.version }}.0-${{ matrix.distro }}
           labels: |
-            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
+            org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}.0
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}

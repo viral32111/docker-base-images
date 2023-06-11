@@ -36,6 +36,8 @@ jobs:
       REGISTRY_IMAGE_NAME: ubuntu
       HUMAN_IMAGE_NAME: Ubuntu
     strategy:
+      max-parallel: 2
+      fail-fast: false
       matrix:
         release: [ '18.04', '20.04', '22.04', '22.10', '23.04' ]
     permissions:
@@ -163,6 +165,8 @@ jobs:
       REGISTRY_IMAGE_NAME: alpine
       HUMAN_IMAGE_NAME: Alpine Linux
     strategy:
+      max-parallel: 2
+      fail-fast: false
       matrix:
         release: [ '3.16', '3.17', '3.18' ]
     permissions:
@@ -281,6 +285,8 @@ jobs:
       REGISTRY_IMAGE_NAME: java
       HUMAN_IMAGE_NAME: Java
     strategy:
+      max-parallel: 2
+      fail-fast: false
       matrix:
         version: [ '8', '11', '16', '17', '18', '19' ]
         distro: [ 'ubuntu', 'alpine' ]
@@ -380,6 +386,8 @@ jobs:
       REGISTRY_IMAGE_NAME: dotnet
       HUMAN_IMAGE_NAME: .NET Runtime
     strategy:
+      max-parallel: 2
+      fail-fast: false
       matrix:
         version: [ '6', '7' ]
         distro: [ 'ubuntu', 'alpine' ]
@@ -455,6 +463,8 @@ jobs:
       REGISTRY_IMAGE_NAME: aspnetcore
       HUMAN_IMAGE_NAME: ASP.NET Core Runtime
     strategy:
+      max-parallel: 2
+      fail-fast: false
       matrix:
         version: [ '6', '7' ]
         distro: [ 'ubuntu', 'alpine' ]
@@ -529,6 +539,8 @@ jobs:
       REGISTRY_IMAGE_NAME: nodejs
       HUMAN_IMAGE_NAME: Node.js
     strategy:
+      max-parallel: 2
+      fail-fast: false
       matrix:
         version: [ '18', '19' ]
         distro: [ 'ubuntu' ]
@@ -601,6 +613,8 @@ jobs:
       REGISTRY_IMAGE_NAME: python
       HUMAN_IMAGE_NAME: Python
     strategy:
+      max-parallel: 2
+      fail-fast: false
       matrix:
         version: [ '3' ]
         distro: [ 'ubuntu' ]

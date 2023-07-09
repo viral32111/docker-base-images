@@ -145,6 +145,13 @@ jobs:
             org.opencontainers.image.version=${{ steps.version.outputs.code }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
+      # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
+      - name: Sleep due to rate-limiting
+        run: |
+          SLEEP_SECONDS=$(($RANDOM % 300))
+          echo "Sleeping for $SLEEP_SECONDS seconds to avoid hitting the GitHub Container Registry's push rate-limits..."
+          sleep $SLEEP_SECONDS
+
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -262,6 +269,13 @@ jobs:
             org.opencontainers.image.version=${{ steps.version.outputs.code }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
+      # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
+      - name: Sleep due to rate-limiting
+        run: |
+          SLEEP_SECONDS=$(($RANDOM % 300))
+          echo "Sleeping for $SLEEP_SECONDS seconds to avoid hitting the GitHub Container Registry's push rate-limits..."
+          sleep $SLEEP_SECONDS
+
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -361,6 +375,13 @@ jobs:
             org.opencontainers.image.version=${{ steps.version.outputs.result }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
+      # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
+      - name: Sleep due to rate-limiting
+        run: |
+          SLEEP_SECONDS=$(($RANDOM % 300))
+          echo "Sleeping for $SLEEP_SECONDS seconds to avoid hitting the GitHub Container Registry's push rate-limits..."
+          sleep $SLEEP_SECONDS
+
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -437,6 +458,13 @@ jobs:
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
+      - name: Sleep due to rate-limiting
+        run: |
+          SLEEP_SECONDS=$(($RANDOM % 300))
+          echo "Sleeping for $SLEEP_SECONDS seconds to avoid hitting the GitHub Container Registry's push rate-limits..."
+          sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
@@ -515,6 +543,13 @@ jobs:
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
+      # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
+      - name: Sleep due to rate-limiting
+        run: |
+          SLEEP_SECONDS=$(($RANDOM % 300))
+          echo "Sleeping for $SLEEP_SECONDS seconds to avoid hitting the GitHub Container Registry's push rate-limits..."
+          sleep $SLEEP_SECONDS
+
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -589,6 +624,13 @@ jobs:
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
 
+      # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
+      - name: Sleep due to rate-limiting
+        run: |
+          SLEEP_SECONDS=$(($RANDOM % 300))
+          echo "Sleeping for $SLEEP_SECONDS seconds to avoid hitting the GitHub Container Registry's push rate-limits..."
+          sleep $SLEEP_SECONDS
+
       - name: Build & push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -659,6 +701,13 @@ jobs:
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
             com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+
+      # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
+      - name: Sleep due to rate-limiting
+        run: |
+          SLEEP_SECONDS=$(($RANDOM % 300))
+          echo "Sleeping for $SLEEP_SECONDS seconds to avoid hitting the GitHub Container Registry's push rate-limits..."
+          sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
         uses: docker/build-push-action@v4

@@ -181,6 +181,7 @@ jobs:
       fail-fast: false
       matrix:
         release: [ '3.16', '3.17', '3.18' ]
+        architecture: [ 'amd64' ]
     permissions:
       contents: read
       packages: write
@@ -196,10 +197,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
 
       - name: Fetch latest version
         id: version
@@ -289,7 +293,7 @@ jobs:
           context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
           provenance: false
           no-cache: true
           pull: true
@@ -309,6 +313,7 @@ jobs:
       matrix:
         version: [ '8', '11', '16', '17', '18', '19' ]
         distro: [ 'ubuntu', 'alpine' ]
+        architecture: [ 'amd64' ]
     permissions:
       contents: read
       packages: write
@@ -324,10 +329,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
 
       - name: Fetch latest version
         id: version
@@ -395,7 +403,7 @@ jobs:
           context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
           provenance: false
           no-cache: true
           pull: true
@@ -417,6 +425,7 @@ jobs:
       matrix:
         version: [ '6', '7' ]
         distro: [ 'ubuntu', 'alpine' ]
+        architecture: [ 'amd64' ]
     permissions:
       contents: read
       packages: write
@@ -432,10 +441,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
 
       - name: Fetch latest version
         id: version
@@ -479,7 +491,7 @@ jobs:
           context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
           provenance: false
           no-cache: true
           pull: true
@@ -501,6 +513,7 @@ jobs:
       matrix:
         version: [ '6', '7' ]
         distro: [ 'ubuntu', 'alpine' ]
+        architecture: [ 'amd64' ]
     permissions:
       contents: read
       packages: write
@@ -516,10 +529,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
 
       - name: Fetch latest version
         id: version
@@ -563,7 +579,7 @@ jobs:
           context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
           provenance: false
           no-cache: true
           pull: true
@@ -584,6 +600,7 @@ jobs:
       matrix:
         version: [ '18', '19' ]
         distro: [ 'ubuntu' ]
+        architecture: [ 'amd64' ]
     permissions:
       contents: read
       packages: write
@@ -599,10 +616,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
 
       - name: Fetch latest version
         id: version
@@ -644,7 +664,7 @@ jobs:
           context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
           provenance: false
           no-cache: true
           pull: true
@@ -665,6 +685,7 @@ jobs:
       matrix:
         version: [ '3' ]
         distro: [ 'ubuntu' ]
+        architecture: [ 'amd64' ]
     permissions:
       contents: read
       packages: write
@@ -680,10 +701,13 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
 
       - name: Fetch latest version
         id: version
@@ -722,7 +746,7 @@ jobs:
           context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
           provenance: false
           no-cache: true
           pull: true

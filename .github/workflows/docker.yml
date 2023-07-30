@@ -25,8 +25,8 @@ concurrency:
 
 # Variables available in all jobs
 env:
-  REGISTRY_DOMAIN: ghcr.io
-  PUBLISHER_WEBSITE: https://viral32111.com
+  DOCKER_REGISTRY_DOMAIN: ghcr.io
+  DOCKER_LABEL_PUBLISHER_URL: https://viral32111.com
 
 jobs:
   ubuntu:
@@ -52,7 +52,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_DOMAIN }}
+          registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -142,14 +142,14 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: type=raw,value=${{ matrix.release }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.release }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }} (${{ steps.version.outputs.name }})
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.code }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+            com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
       - name: Sleep due to rate-limiting
@@ -194,7 +194,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_DOMAIN }}
+          registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -271,14 +271,14 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: type=raw,value=${{ matrix.release }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.release }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.code }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+            com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
       - name: Sleep due to rate-limiting
@@ -327,7 +327,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_DOMAIN }}
+          registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -379,7 +379,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
@@ -388,7 +388,7 @@ jobs:
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.result }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.result }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+            com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
       - name: Sleep due to rate-limiting
@@ -439,7 +439,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_DOMAIN }}
+          registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -465,7 +465,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}.0,enable=${{ matrix.distro == 'alpine' }}
@@ -476,7 +476,7 @@ jobs:
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+            com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
       - name: Sleep due to rate-limiting
@@ -527,7 +527,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_DOMAIN }}
+          registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -553,7 +553,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}.0,enable=${{ matrix.distro == 'alpine' }}
@@ -564,7 +564,7 @@ jobs:
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+            com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
       - name: Sleep due to rate-limiting
@@ -614,7 +614,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_DOMAIN }}
+          registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -640,7 +640,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'ubuntu' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
@@ -649,7 +649,7 @@ jobs:
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+            com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
       - name: Sleep due to rate-limiting
@@ -699,7 +699,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY_DOMAIN }}
+          registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -723,7 +723,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           flavor: latest=false
-          images: ${{ env.REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
@@ -731,7 +731,7 @@ jobs:
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
-            com.docker.extension.publisher-url=${{ env.PUBLISHER_WEBSITE }}
+            com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
       - name: Sleep due to rate-limiting

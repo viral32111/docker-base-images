@@ -18,10 +18,10 @@ on:
     - cron: '0 1 * * 0'
   workflow_dispatch:
 
-# Cancel any on-going workflow runs
+# Wait for any on-going workflow runs
 concurrency:
   group: ${{ github.workflow }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 # Variables available in all jobs
 env:
@@ -39,7 +39,8 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '18.04', '20.04', '22.04', '22.10', '23.04' ]
+        release: [ '18.04', '20.04', '22.04', '23.04' ]
+        architecture: [ 'amd64', 'arm64' ]
     permissions:
       contents: read
       packages: write
@@ -48,27 +49,31 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Login to GitHub Container Registry
-        if: ${{ github.event.pull_request == null && !startsWith( github.ref, 'refs/heads/dependabot/' ) }}
+        if: ${{ github.event_name != 'pull_request' }}
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Setup Docker
         uses: docker/setup-buildx-action@v2
         with:
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
 
       - name: Fetch latest version
         id: version
         uses: actions/github-script@v6
         env:
           RELEASE: ${{ matrix.release }}
+          ARCHITECTURE: ${{ matrix.architecture }}
         with:
           script: |
-            const { RELEASE } = process.env;
-            console.log( `Release is '${ RELEASE }'.` );
+            const { RELEASE, ARCHITECTURE } = process.env;
+            console.log( `Release is '${ RELEASE }' for architecture '${ ARCHITECTURE }'.` );
 
             const seriesResponse = await fetch( 'https://api.launchpad.net/1.0/ubuntu/series' );
             const seriesData = await seriesResponse.json();
@@ -98,7 +103,7 @@ jobs:
               }
 
               console.log( `Checking download link for milestone '${ milestoneName }'...` );
-              const downloadResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/ubuntu-base-${ milestoneName }-base-amd64.tar.gz`, {
+              const downloadResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/ubuntu-base-${ milestoneName }-base-${ ARCHITECTURE }.tar.gz`, {
                 method: 'HEAD'
               } );
 
@@ -118,7 +123,7 @@ jobs:
             if ( !checksumsText ) throw new Error( 'No download checksums available!' );
             console.log( 'Fetched SHA-256 checksums for downloads.' );
 
-            const checksumLine = checksumsText.split( '\n' ).filter( line => line.endsWith( `*ubuntu-base-${ milestoneCode }-base-amd64.tar.gz` ) )[ 0 ];
+            const checksumLine = checksumsText.split( '\n' ).filter( line => line.endsWith( `*ubuntu-base-${ milestoneCode }-base-${ ARCHITECTURE }.tar.gz` ) )[ 0 ];
             const checksum = checksumLine.split( ' ', 2 )[ 0 ];
             console.log( `SHA-256 checksum for download is '${ checksum }'.` );
 
@@ -128,7 +133,7 @@ jobs:
 
       - name: Download latest version
         run: |
-          wget --progress dot:mega --output-document ./context/ubuntu.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.release }}/release/ubuntu-base-${{ steps.version.outputs.code }}-base-amd64.tar.gz
+          wget --progress dot:mega --output-document ./context/ubuntu.tar.gz https://cdimage.ubuntu.com/ubuntu-base/releases/${{ matrix.release }}/release/ubuntu-base-${{ steps.version.outputs.code }}-base-${{ matrix.architecture }}.tar.gz
           echo "${{ steps.version.outputs.checksum }} ./context/ubuntu.tar.gz" | sha256sum --check
 
       - name: Create metadata for Docker image
@@ -160,7 +165,7 @@ jobs:
           context: ./context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/${{ matrix.architecture }}
           provenance: false
           no-cache: true
           pull: true

@@ -770,12 +770,13 @@ jobs:
     permissions:
       packages: write
     steps:
-      - name: Delete untagged Docker images
+      - name: Delete old Docker images
         uses: snok/container-retention-policy@v2
         with:
           image-names: ubuntu,alpine,java,dotnet,aspnetcore,nodejs,python
-          cut-off: 0 seconds ago UTC
-          keep-at-least: 0
+          cut-off: 24 hours ago UTC
+          keep-at-least: 1
           untagged-only: true
+          skip-tags: latest
           account-type: personal
           token: ${{ secrets.PAT_PACKAGES }}

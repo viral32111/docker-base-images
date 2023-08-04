@@ -143,7 +143,7 @@ jobs:
         with:
           flavor: |
             latest=false
-            suffix=${{ matrix.architecture }},onlatest=false
+            suffix=-${{ matrix.architecture }},onlatest=false
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: type=raw,value=${{ matrix.release }}
           labels: |

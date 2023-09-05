@@ -33,9 +33,9 @@ ENV PATH=${NODEJS_DIRECTORY}/bin:$PATH \
 	NODE_ENV=production
 
 # Update NPM to the latest version
-RUN npm install --global npm && \
-	npm cache clean --force && \
-	rm --verbose --recursive $HOME/.npm
+RUN npm upgrade --global npm && \
+	rm --verbose --recursive $HOME/.npm && \
+	npm cache clean --force
 
 # Run commands with Node.js
 ENTRYPOINT [ "node" ]

@@ -600,6 +600,7 @@ jobs:
     runs-on: ubuntu-22.04
     needs:
       - ubuntu
+      - alpine
     env:
       REGISTRY_IMAGE_NAME: nodejs
       HUMAN_IMAGE_NAME: Node.js
@@ -608,7 +609,7 @@ jobs:
       fail-fast: false
       matrix:
         version: [ '18', '19', '20' ]
-        distro: [ 'ubuntu' ]
+        distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
       contents: read

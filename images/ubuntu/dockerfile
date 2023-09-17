@@ -67,8 +67,6 @@ RUN apt-get update && \
 	apt-get clean --yes && \
 	rm --verbose --force --recursive /var/lib/apt/lists/*
 
-ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-${ARCHITECTURE}-glibc /usr/local/bin/healthcheck
-
 # Switch to the regular user's home directory
 WORKDIR ${USER_HOME}
 

@@ -3,9 +3,6 @@
 # Start from nothing
 FROM scratch
 
-# Configure the version of my container healthcheck utility
-ARG HEALTHCHECK_VERSION=2.0.0
-
 # Extract the root filesystem & use Bash as the shell
 ADD --chown=0:0 ./ubuntu.tar.gz /
 SHELL [ "/bin/bash", "-c" ]
@@ -17,11 +14,11 @@ COPY --chown=0:0 --chmod=644 ./viral32111.crt /usr/local/share/ca-certificates/v
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
 	apt-get upgrade --yes && \
-	printf "%s\n%s\n" \
+	printf "%s\n" \
 		"tzdata tzdata/Areas select Etc" \
 		"tzdata tzdata/Zones/Etc select UTC" | debconf-set-selections --verbose && \
 	apt-get install --no-install-recommends --yes ca-certificates tzdata locales && \
-	printf "%s\n%s\n%s\n" \
+	printf "%s\n" \
 		"C.UTF-8 UTF-8" \
 		"en_GB.UTF-8 UTF-8" \
 		"en_US.UTF-8 UTF-8" | tee /etc/locale.gen && \
@@ -35,7 +32,7 @@ RUN mkdir --verbose --parents /var/empty && \
 
 # Switch to secure package repository mirror hosted in the United Kingdom
 RUN source /etc/os-release && \
-	printf "%s\n%s\n%s\n%s\n" \
+	printf "%s\n" \
 		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME} main restricted universe multiverse" \
 		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-updates main restricted universe multiverse" \
 		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-backports main restricted universe multiverse" \
@@ -60,7 +57,17 @@ RUN mkdir --verbose --parents ${USER_HOME} && \
 	chown --changes --recursive ${USER_ID}:${USER_ID} ${USER_HOME}
 
 # Download my container healthcheck utility
-ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-amd64-glibc /usr/local/bin/healthcheck
+ARG HEALTHCHECK_VERSION=2.0.1
+RUN apt-get update && \
+	apt-get install --no-install-recommends --yes wget && \
+	ARCHITECTURE=$(dpkg --print-architecture) && \
+	wget --no-hsts --progress dot:mega --output-document /usr/local/bin/healthcheck https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-${ARCHITECTURE}-glibc 2>&1 && \
+	chmod --changes 755 /usr/local/bin/healthcheck && \
+	apt-get remove --purge --auto-remove --yes wget && \
+	apt-get clean --yes && \
+	rm --verbose --force --recursive /var/lib/apt/lists/*
+
+ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-${ARCHITECTURE}-glibc /usr/local/bin/healthcheck
 
 # Switch to the regular user's home directory
 WORKDIR ${USER_HOME}

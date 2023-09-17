@@ -1,8 +1,5 @@
-# This workflow builds all of my Docker base images.
-
 name: Docker
 
-# Run every Sunday, or when relevant files are updated
 on:
   push:
     paths:
@@ -15,7 +12,7 @@ on:
     tags:
       - '*.*.*'
   schedule:
-    - cron: '0 1 * * 0'
+    - cron: '0 1 * * 0' # Every Sunday at 01:00
   workflow_dispatch:
 
 # Wait for any on-going workflow runs
@@ -141,16 +138,16 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
+          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: |
             latest=false
             suffix=-${{ matrix.architecture }},onlatest=false
-          images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           tags: type=raw,value=${{ matrix.release }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.release }}
-            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }} (${{ steps.version.outputs.name }})
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }} (${{ steps.version.outputs.name }}) for ${{ matrix.architecture }}
             org.opencontainers.image.version=${{ steps.version.outputs.code }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
             com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
@@ -184,7 +181,12 @@ jobs:
       fail-fast: false
       matrix:
         release: [ '3.16', '3.17', '3.18' ]
-        architecture: [ 'amd64' ]
+        architecture: [ 'amd64', 'arm64' ]
+        include:
+          - architecture: amd64
+            alternativeArchitecture: x86_64
+          - architecture: arm64
+            alternativeArchitecture: aarch64
     permissions:
       contents: read
       packages: write
@@ -213,12 +215,13 @@ jobs:
         uses: actions/github-script@v6
         env:
           RELEASE: ${{ matrix.release }}
+          ARCHITECTURE: ${{ matrix.alternativeArchitecture }}
         with:
           script: |
-            const { RELEASE } = process.env;
-            console.log( `Release is '${ RELEASE }'.` );
+            const { RELEASE, ARCHITECTURE } = process.env;
+            console.log( `Release is '${ RELEASE }' for architecture '${ ARCHITECTURE }'.` );
 
-            const latestReleasesResponse = await fetch( `https://dl-cdn.alpinelinux.org/alpine/v${ RELEASE }/releases/x86_64/latest-releases.yaml` );
+            const latestReleasesResponse = await fetch( `https://dl-cdn.alpinelinux.org/alpine/v${ RELEASE }/releases/${ ARCHITECTURE }/latest-releases.yaml` );
             const latestReleasesYAML = await latestReleasesResponse.text();
             if ( !latestReleasesYAML ) throw new Error( 'No latest releases available!' );
             console.log( `Fetched latest releases for release '${ RELEASE }'.` );
@@ -265,21 +268,23 @@ jobs:
       - name: Download latest version
         working-directory: context
         run: |
-          wget --progress dot:mega --output-document alpine.tar.gz https://dl-cdn.alpinelinux.org/alpine/v${{ matrix.release }}/releases/x86_64/alpine-minirootfs-${{ steps.version.outputs.code }}-x86_64.tar.gz
+          wget --progress dot:mega --output-document alpine.tar.gz https://dl-cdn.alpinelinux.org/alpine/v${{ matrix.release }}/releases/${{ matrix.alternativeArchitecture }}/alpine-minirootfs-${{ steps.version.outputs.code }}-${{ matrix.alternativeArchitecture }}.tar.gz
           echo "${{ steps.version.outputs.checksum }} alpine.tar.gz" | sha256sum --check
 
       - name: Create metadata for Docker image
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=false
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          flavor: |
+            latest=false
+            suffix=-${{ matrix.architecture }},onlatest=false
           tags: type=raw,value=${{ matrix.release }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.release }}
-            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }}
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.code }} for ${{ matrix.architecture }}
             org.opencontainers.image.version=${{ steps.version.outputs.code }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
             com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.

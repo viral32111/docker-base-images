@@ -1,0 +1,42 @@
+# syntax=docker/dockerfile:1
+# docker buildx build --progress plain --pull --file ./images/alpine/nodejs/dockerfile --tag ghcr.io/viral32111/nodejs:20.4.0-alpine-3.18.2 /var/empty
+
+# https://nodejs.org/en/download/current
+
+# Start from Alpine Linux
+FROM ghcr.io/viral32111/alpine:3.18
+
+# Configuration
+ARG NODEJS_VERSION=20.6.1 \
+	NODEJS_CHECKSUM=0053c09a01b1b355bca5af82927cae376124c13d74fa53567f08f4cfb085e6aa \
+	NODEJS_DIRECTORY=/opt/nodejs
+
+# Download & extract the source code
+RUN apk add --no-cache wget && \
+	wget --no-hsts --output-document /tmp/nodejs.tar.gz https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}.tar.gz && \
+	echo "${NODEJS_CHECKSUM} /tmp/nodejs.tar.gz" | sha256sum -c && \
+	mkdir -v -p /tmp/nodejs && \
+	tar x -v -o --strip-components 1 --file /tmp/nodejs.tar.gz --directory /tmp/nodejs && \
+	rm -v -R /tmp/nodejs.tar.gz && \
+	apk del --no-cache wget
+
+# Build from source & install
+RUN apk add --no-cache build-base linux-headers python3 && \
+	/tmp/nodejs/configure --prefix=${NODEJS_DIRECTORY} && \
+	make --directory /tmp/nodejs --jobs $(nproc) && \
+	make --directory /tmp/nodejs --jobs $(nproc) install && \
+	rm -v -R /tmp/nodejs && \
+	apk del --no-cache build-base linux-headers python3
+
+# Add to the system paths & set the environment to production
+ENV PATH=${NODEJS_DIRECTORY}/bin:$PATH \
+	LD_LIBRARY_PATH=${NODEJS_DIRECTORY}/lib:$LD_LIBRARY_PATH \
+	NODE_ENV=production
+
+# Update NPM to the latest version
+RUN npm install --global npm && \
+	npm cache clean --force && \
+	rm --verbose --recursive $HOME/.npm
+
+# Run commands with Node.js
+ENTRYPOINT [ "node" ]

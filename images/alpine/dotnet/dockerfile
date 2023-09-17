@@ -4,10 +4,10 @@
 # https://learn.microsoft.com/en-gb/dotnet/core/install/linux-alpine#dependencies
 
 # Start from Alpine
-FROM ghcr.io/viral32111/alpine:3.17
+FROM ghcr.io/viral32111/alpine:3.18
 
 # Configure version & directory
-ARG DOTNET_VERSION=7.0.5 \
+ARG DOTNET_VERSION=7.0.11 \
 	DOTNET_DIRECTORY=/opt/dotnet
 
 # Download & install ASP.NET Core Runtime

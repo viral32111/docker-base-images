@@ -5,10 +5,10 @@
 
 # Start from Ubuntu
 # NOTE: We use Ubuntu instead of Alpine as the musl build of Node.js is slightly bigger than the glibc build! (it's also unofficial)
-FROM ghcr.io/viral32111/ubuntu:22.10
+FROM ghcr.io/viral32111/ubuntu:23.04
 
 # Configure the version & directory
-ARG NODEJS_VERSION=20.5.1 \
+ARG NODEJS_VERSION=20.6.1 \
 	NODEJS_DIRECTORY=/opt/nodejs
 
 # Download & extract the Node.js pre-built binaries

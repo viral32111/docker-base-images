@@ -4,10 +4,10 @@
 # https://learn.microsoft.com/en-gb/dotnet/core/install/linux-ubuntu-2210#dependencies
 
 # Start from Ubuntu
-FROM ghcr.io/viral32111/ubuntu:22.10
+FROM ghcr.io/viral32111/ubuntu:23.04
 
 # Configure version & directory
-ARG DOTNET_VERSION=7.0.5 \
+ARG DOTNET_VERSION=7.0.11 \
 	DOTNET_DIRECTORY=/opt/dotnet
 
 # Download & install .NET Runtime

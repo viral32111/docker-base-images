@@ -1,10 +1,10 @@
 # syntax=docker/dockerfile:1
 
 # Start from Ubuntu, for the configuration stage
-FROM ghcr.io/viral32111/ubuntu:22.10 AS config
+FROM ghcr.io/viral32111/ubuntu:23.04 AS config
 
 # Configuration - https://www.python.org/downloads/source/
-ARG PYTHON_VERSION=3.11.3 \
+ARG PYTHON_VERSION=3.11.5 \
 	PYTHON_DIRECTORY=/usr/local/python
 
 ###########################################################

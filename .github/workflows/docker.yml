@@ -385,16 +385,16 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=false
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          flavor: latest=false
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.result }} (${{ matrix.distro }}-based)
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.result }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
             com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
@@ -471,8 +471,8 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=false
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          flavor: latest=false
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}.0,enable=${{ matrix.distro == 'alpine' }}
@@ -481,8 +481,8 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}.0
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
             com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
@@ -559,8 +559,8 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=false
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          flavor: latest=false
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'alpine' }}
             type=raw,value=${{ matrix.version }}.0,enable=${{ matrix.distro == 'alpine' }}
@@ -569,8 +569,8 @@ jobs:
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}.0
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
             com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
@@ -646,16 +646,16 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=false
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          flavor: latest=false
           tags: |
             type=raw,value=${{ matrix.version }},enable=${{ matrix.distro == 'ubuntu' }}
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
             com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
@@ -729,15 +729,15 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          flavor: latest=false
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
+          flavor: latest=false
           tags: |
             type=raw,value=${{ matrix.version }}-${{ matrix.distro }}
           labels: |
             org.opencontainers.image.title=${{ env.HUMAN_IMAGE_NAME }} ${{ matrix.version }}
             org.opencontainers.image.description=${{ env.HUMAN_IMAGE_NAME }} ${{ steps.version.outputs.LATEST_VERSION }} (${{ matrix.distro }}-based)
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.opencontainers.image.version=${{ steps.version.outputs.LATEST_VERSION }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
             com.docker.extension.publisher-url=${{ env.DOCKER_LABEL_PUBLISHER_URL }}
 
       # This is necessary to avoid hitting the GHCR rate-limits as there are so many images built during this workflow due to the matrixes.
@@ -762,17 +762,22 @@ jobs:
           build-args: |
             PYTHON_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
 
-  fatManifestForUbuntu:
-    name: Fat Manifest for Ubuntu
+  fatManifest:
+    name: Fat Manifest
     runs-on: ubuntu-22.04
-    needs: ubuntu
-    env:
-      REGISTRY_IMAGE_NAME: ubuntu
+    needs:
+      - ubuntu
+      - alpine
     strategy:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '18.04', '20.04', '22.04', '23.04' ]
+        image: [ 'ubuntu', 'alpine' ]
+        include:
+          - image: ubuntu
+            release: [ '18.04', '20.04', '22.04', '23.04' ]
+          - image: alpine
+            release: [ '3.16', '3.17', '3.18' ]
     permissions:
       packages: write
     steps:
@@ -792,21 +797,21 @@ jobs:
 
       - name: Create Docker manifest
         run: |
-          docker manifest create ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }} \
-            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }}-amd64 \
-            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }}-arm64
+          docker manifest create ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }} \
+            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-amd64 \
+            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-arm64
 
           docker manifest annotate --os linux --arch amd64 \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }} \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }}-amd64
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }} \
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-amd64
 
           docker manifest annotate --os linux --arch arm64 \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }} \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }}-arm64
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }} \
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-arm64
 
       - name: Push Docker manifest
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        run: docker manifest push ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}:${{ matrix.release }}
+        run: docker manifest push ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}
 
   cleanup:
     name: Cleanup
@@ -820,7 +825,7 @@ jobs:
       - aspnetcore
       - nodejs
       - python
-      - fatManifestForUbuntu
+      - fatManifest
     permissions:
       packages: write
     steps:

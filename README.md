@@ -25,7 +25,7 @@ The following changes have been made within these images:
 | [Ubuntu 18.04](https://www.releases.ubuntu.com/bionic/) | 18.04.5 | [`ghcr.io/viral32111/ubuntu:18.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 | [Ubuntu 20.04](https://www.releases.ubuntu.com/focal/) | 20.04.5 | [`ghcr.io/viral32111/ubuntu:20.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 | [Ubuntu 22.04](https://www.releases.ubuntu.com/jammy/) | 22.04.2 | [`ghcr.io/viral32111/ubuntu:22.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
-| [Ubuntu 22.10](https://www.releases.ubuntu.com/kinetic/) | 22.10 | [`ghcr.io/viral32111/ubuntu:22.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
+| ~~[Ubuntu 22.10](https://www.releases.ubuntu.com/kinetic/)~~ | ~~22.10~~ | ~~[`ghcr.io/viral32111/ubuntu:22.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu)~~ | Deprecated. |
 | [Ubuntu 23.04](https://www.releases.ubuntu.com/lunar/) | 23.04 | [`ghcr.io/viral32111/ubuntu:23.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 
 | Title | Version | Image name & tag | Note |

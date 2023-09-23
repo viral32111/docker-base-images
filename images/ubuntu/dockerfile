@@ -3,6 +3,9 @@
 # Start from nothing
 FROM scratch
 
+# Target architecture set by GitHub Actions (CI) workflow
+ARG ARCHITECTURE=amd64
+
 # Extract the root filesystem & use Bash as the shell
 ADD --chown=0:0 ./ubuntu.tar.gz /
 SHELL [ "/bin/bash", "-c" ]
@@ -30,24 +33,26 @@ RUN apt-get update && \
 RUN mkdir --verbose --parents /var/empty && \
 	chmod --changes 555 /var/empty
 
-# Switch to secure package repository mirror hosted in the United Kingdom
+# Switch to secure package repository mirror hosted in the United Kingdom, unless we're on ARM
 RUN source /etc/os-release && \
+	REGULAR_MIRROR_URL=$(case "${ARCHITECTURE}" in arm64) echo "http://ports.ubuntu.com/" ;; *) echo "https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/" ;; esac) && \
+	SECURITY_MIRROR_URL=$(case "${ARCHITECTURE}" in arm64) echo "http://ports.ubuntu.com/" ;; *) echo "http://security.ubuntu.com/ubuntu/" ;; esac) && \
 	printf "%s\n" \
-		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME} main restricted universe multiverse" \
-		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-updates main restricted universe multiverse" \
-		"deb https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-backports main restricted universe multiverse" \
-		"deb http://security.ubuntu.com/ubuntu/ ${VERSION_CODENAME}-security main restricted universe multiverse" | tee /etc/apt/sources.list
+		"deb ${MIRROR_URL} ${VERSION_CODENAME} main restricted universe multiverse" \
+		"deb ${MIRROR_URL} ${VERSION_CODENAME}-updates main restricted universe multiverse" \
+		"deb ${MIRROR_URL} ${VERSION_CODENAME}-backports main restricted universe multiverse" \
+		"deb ${SECURITY_MIRROR_URL} ${VERSION_CODENAME}-security main restricted universe multiverse" | tee /etc/apt/sources.list
 
-# Set the regular user, locale & shell history
+# Set the regular user & locale, include home directories in the system path & disable shell history
 ENV USER_ID=1000 \
 	USER_NAME=user \
 	USER_HOME=/home/user \
-	PATH=/root/.local/bin:/home/user/.local/bin:$PATH \
 	CHARSET=UTF-8 \
 	LC_ALL=en_GB.UTF-8 \
 	LANG=en_GB.UTF-8 \
 	LANGUAGE=en_GB \
 	TZ=Etc/UTC \
+	PATH=/root/.local/bin:/home/user/.local/bin:$PATH \
 	HISTFILE=/dev/null
 
 # Create the regular user
@@ -58,14 +63,7 @@ RUN mkdir --verbose --parents ${USER_HOME} && \
 
 # Download my container healthcheck utility
 ARG HEALTHCHECK_VERSION=2.0.1
-RUN apt-get update && \
-	apt-get install --no-install-recommends --yes wget && \
-	ARCHITECTURE=$(dpkg --print-architecture) && \
-	wget --no-hsts --progress dot:mega --output-document /usr/local/bin/healthcheck https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-${ARCHITECTURE}-glibc 2>&1 && \
-	chmod --changes 755 /usr/local/bin/healthcheck && \
-	apt-get remove --purge --auto-remove --yes wget && \
-	apt-get clean --yes && \
-	rm --verbose --force --recursive /var/lib/apt/lists/*
+ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-${ARCHITECTURE}-glibc /usr/local/bin/healthcheck
 
 # Switch to the regular user's home directory
 WORKDIR ${USER_HOME}

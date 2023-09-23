@@ -3,6 +3,9 @@
 # Start from nothing
 FROM scratch
 
+# Target architecture set by GitHub Actions (CI) workflow
+ARG ARCHITECTURE=x86_64
+
 # Extract the root filesystem & use standard shell
 ADD --chown=0:0 ./alpine.tar.gz /
 SHELL [ "/bin/sh", "-c" ]
@@ -19,7 +22,7 @@ RUN apk upgrade --no-cache && \
 
 # Create the read-only empty directory
 RUN mkdir -v -p /var/empty && \
-	chmod -c 555 /var/empty
+	chmod 555 /var/empty
 
 # Switch to the package repository mirror hosted in the United Kingdom
 RUN source /etc/os-release && \
@@ -48,11 +51,7 @@ RUN mkdir -v -p ${USER_HOME} && \
 
 # Download my container healthcheck utility
 ARG HEALTHCHECK_VERSION=2.0.1
-RUN apk add --no-cache wget && \
-	ARCHITECTURE=$(arch=$(uname -m); case "$arch" in x86_64) echo amd64 ;; aarch64) echo arm64 ;; *) echo "$arch" ;; esac) && \
-	wget --no-hsts --progress dot:mega --output-document /usr/local/bin/healthcheck https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-${ARCHITECTURE}-musl 2>&1 && \
-	chmod --changes 755 /usr/local/bin/healthcheck && \
-	apk del --no-cache wget
+ADD --chown=0:0 --chmod=755 https://github.com/viral32111/healthcheck/releases/download/${HEALTHCHECK_VERSION}/healthcheck-linux-${ARCHITECTURE}-musl /usr/local/bin/healthcheck
 
 # Switch to the regular user's home directory
 WORKDIR ${USER_HOME}

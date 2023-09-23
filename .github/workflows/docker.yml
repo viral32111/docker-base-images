@@ -169,6 +169,10 @@ jobs:
           provenance: false
           no-cache: true
           pull: true
+          build-args: |
+            RELEASE=${{ steps.version.outputs.name }}
+            VERSION=${{ steps.version.outputs.code }}
+            ARCHITECTURE=${{ matrix.architecture }}
 
   alpine:
     name: Alpine Linux
@@ -306,6 +310,9 @@ jobs:
           provenance: false
           no-cache: true
           pull: true
+          build-args: |
+            VERSION=${{ steps.version.outputs.code }}
+            ARCHITECTURE=${{ matrix.alternativeArchitecture }}
 
   java:
     name: Java

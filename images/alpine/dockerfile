@@ -4,7 +4,7 @@
 FROM scratch
 
 # Target architecture set by GitHub Actions (CI) workflow
-ARG ARCHITECTURE=x86_64
+ARG ARCHITECTURE=amd64
 
 # Extract the root filesystem & use standard shell
 ADD --chown=0:0 ./alpine.tar.gz /

@@ -312,7 +312,7 @@ jobs:
           pull: true
           build-args: |
             VERSION=${{ steps.version.outputs.code }}
-            ARCHITECTURE=${{ matrix.alternativeArchitecture }}
+            ARCHITECTURE=${{ matrix.architecture }}
 
   java:
     name: Java

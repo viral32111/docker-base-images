@@ -780,12 +780,14 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        image: [ 'ubuntu', 'alpine' ]
-        include:
-          - image: ubuntu
-            release: [ '18.04', '20.04', '22.04', '23.04' ]
-          - image: alpine
-            release: [ '3.16', '3.17', '3.18' ]
+        image: 
+          - ubuntu:18.04
+          - ubuntu:20.04
+          - ubuntu:22.04
+          - ubuntu:23.04
+          - alpine:3.16
+          - alpine:3.17
+          - alpine:3.18
     permissions:
       packages: write
     steps:
@@ -805,17 +807,17 @@ jobs:
 
       - name: Create Docker manifest
         run: |
-          docker manifest create ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }} \
-            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-amd64 \
-            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-arm64
+          docker manifest create ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }} \
+            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}-amd64 \
+            --amend ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}-arm64
 
           docker manifest annotate --os linux --arch amd64 \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }} \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-amd64
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }} \
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}-amd64
 
           docker manifest annotate --os linux --arch arm64 \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }} \
-            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}-arm64
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }} \
+            ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}-arm64
 
       - name: Push Docker manifest
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}

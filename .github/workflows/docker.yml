@@ -677,7 +677,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-          file: images/${{ matrix.distro }}/node.js/dockerfile
+          file: images/${{ matrix.distro }}/nodejs/dockerfile
           context: context/
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}

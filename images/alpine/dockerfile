@@ -25,11 +25,11 @@ RUN mkdir -v -p /var/empty && \
 	chmod 555 /var/empty
 
 # Switch to the package repository mirror hosted in the United Kingdom
-RUN source /etc/os-release && \
-	export RELEASE=$(echo ${VERSION_ID} | grep -Eo '[0-9]\.[0-9]+') && \
-	printf "%s\n" \
-		"https://uk.alpinelinux.org/alpine/v${RELEASE}/main" \
-		"https://uk.alpinelinux.org/alpine/v${RELEASE}/community" | tee /etc/apk/repositories
+#RUN source /etc/os-release && \
+#	export RELEASE=$(echo ${VERSION_ID} | grep -Eo '[0-9]\.[0-9]+') && \
+#	printf "%s\n" \
+#		"https://uk.alpinelinux.org/alpine/v${RELEASE}/main" \
+#		"https://uk.alpinelinux.org/alpine/v${RELEASE}/community" | tee /etc/apk/repositories
 
 # Set the regular user, locale & shell history
 ENV USER_ID=1000 \

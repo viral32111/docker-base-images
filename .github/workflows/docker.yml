@@ -821,7 +821,7 @@ jobs:
 
       - name: Push Docker manifest
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        run: docker manifest push ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}:${{ matrix.release }}
+        run: docker manifest push ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ matrix.image }}
 
   cleanup:
     name: Cleanup

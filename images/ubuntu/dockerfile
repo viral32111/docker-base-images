@@ -38,9 +38,9 @@ RUN source /etc/os-release && \
 	REGULAR_MIRROR_URL=$(case "${ARCHITECTURE}" in arm64) echo "http://ports.ubuntu.com/" ;; *) echo "https://www.mirrorservice.org/sites/archive.ubuntu.com/ubuntu/" ;; esac) && \
 	SECURITY_MIRROR_URL=$(case "${ARCHITECTURE}" in arm64) echo "http://ports.ubuntu.com/" ;; *) echo "http://security.ubuntu.com/ubuntu/" ;; esac) && \
 	printf "%s\n" \
-		"deb ${MIRROR_URL} ${VERSION_CODENAME} main restricted universe multiverse" \
-		"deb ${MIRROR_URL} ${VERSION_CODENAME}-updates main restricted universe multiverse" \
-		"deb ${MIRROR_URL} ${VERSION_CODENAME}-backports main restricted universe multiverse" \
+		"deb ${REGULAR_MIRROR_URL} ${VERSION_CODENAME} main restricted universe multiverse" \
+		"deb ${REGULAR_MIRROR_URL} ${VERSION_CODENAME}-updates main restricted universe multiverse" \
+		"deb ${REGULAR_MIRROR_URL} ${VERSION_CODENAME}-backports main restricted universe multiverse" \
 		"deb ${SECURITY_MIRROR_URL} ${VERSION_CODENAME}-security main restricted universe multiverse" | tee /etc/apt/sources.list
 
 # Set the regular user & locale, include home directories in the system path & disable shell history

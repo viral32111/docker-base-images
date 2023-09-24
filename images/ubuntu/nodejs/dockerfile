@@ -1,26 +1,28 @@
 # syntax=docker/dockerfile:1
 
 # https://nodejs.org/en/download/current/
-# https://unofficial-builds.nodejs.org/download/release/v19.2.0/
+# https://nodejs.org/dist/v20.7.0/SHASUMS256.txt.asc
 
 # Start from Ubuntu
-# NOTE: We use Ubuntu instead of Alpine as the musl build of Node.js is slightly bigger than the glibc build! (it's also unofficial)
 FROM ghcr.io/viral32111/ubuntu:23.04
 
 # Configure the version & directory
 ARG NODEJS_VERSION=20.7.0 \
+	NODEJS_CHECKSUM=034bbec28da7b729aea531000a56b37076e94e44aa5dfa346a1d1a89025915a8 \
 	NODEJS_DIRECTORY=/opt/nodejs
 
-# Download & extract the Node.js pre-built binaries
+# Download & extract the pre-built binaries
 RUN apt-get update && \
 	apt-get install --no-install-recommends --yes wget && \
 	mkdir --verbose --parents ${NODEJS_DIRECTORY} && \
 	wget --no-hsts --progress dot:mega --output-document /tmp/nodejs.tar.gz https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-linux-x64.tar.gz 2>&1 && \
+	echo "${NODEJS_CHECKSUM} /tmp/nodejs.tar.gz" | sha256sum --check && \
 	tar --verbose --extract --no-same-owner --strip-components 1 --file /tmp/nodejs.tar.gz --directory ${NODEJS_DIRECTORY} \
 		--exclude '*/README.md' \
 		--exclude '*/CHANGELOG.md' \
 		--exclude '*/LICENSE' \
 		--exclude '*/share/man' && \
+		--exclude '*/share/doc' && \
 	apt-get remove --purge --auto-remove --yes wget && \
 	apt-get clean --yes && \
 	rm --verbose --recursive \

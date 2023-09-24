@@ -1,32 +1,47 @@
 # syntax=docker/dockerfile:1
 # docker buildx build --progress plain --pull --file ./images/alpine/nodejs/dockerfile --tag ghcr.io/viral32111/nodejs:20.4.0-alpine-3.18.2 /var/empty
 
-# https://nodejs.org/en/download/current
+# https://unofficial-builds.nodejs.org/download/release/v20.7.0/node-v20.7.0-linux-x64-musl.tar.gz
+# https://unofficial-builds.nodejs.org/download/release/v20.7.0/SHASUMS256.txt
 
 # Start from Alpine Linux
 FROM ghcr.io/viral32111/alpine:3.18
 
 # Configuration
 ARG NODEJS_VERSION=20.7.0 \
-	NODEJS_CHECKSUM=07b85b65f844dc29ac5038c11b6e34a0997f1744d1487de0ab9a94743e5c12ad \
+	NODEJS_CHECKSUM=4a22dcb11709bf9e70559fab17f0762e40fbc1d504b2f79e45bcaec17139b639 \
 	NODEJS_DIRECTORY=/opt/nodejs
 
-# Download & extract the source code
+# Download & extract the pre-built binaries
 RUN apk add --no-cache wget && \
-	wget --no-hsts --output-document /tmp/nodejs.tar.gz https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}.tar.gz && \
+	wget --no-hsts --output-document /tmp/nodejs.tar.gz https://unofficial-builds.nodejs.org/download/release/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-linux-x64-musl.tar.gz && \
 	echo "${NODEJS_CHECKSUM} /tmp/nodejs.tar.gz" | sha256sum -c && \
-	mkdir -v -p /tmp/nodejs && \
-	tar x -v -o --strip-components 1 --file /tmp/nodejs.tar.gz --directory /tmp/nodejs && \
+	mkdir -v -p ${NODEJS_DIRECTORY} && \
+	tar x -v -o --strip-components 1 -f /tmp/nodejs.tar.gz -C ${NODEJS_DIRECTORY} \
+		--exclude '*/README.md' \
+		--exclude '*/CHANGELOG.md' \
+		--exclude '*/LICENSE' \
+		--exclude '*/share/man' \
+		--exclude '*/share/doc' && \
 	rm -v -R /tmp/nodejs.tar.gz && \
 	apk del --no-cache wget
 
+# Download & extract the source code
+#RUN apk add --no-cache wget && \
+#	wget --no-hsts --output-document /tmp/nodejs.tar.gz https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}.tar.gz && \
+#	echo "${NODEJS_CHECKSUM} /tmp/nodejs.tar.gz" | sha256sum -c && \
+#	mkdir -v -p /tmp/nodejs && \
+#	tar x -v -o --strip-components 1 --file /tmp/nodejs.tar.gz --directory /tmp/nodejs && \
+#	rm -v -R /tmp/nodejs.tar.gz && \
+#	apk del --no-cache wget
+
 # Build from source & install
-RUN apk add --no-cache build-base linux-headers python3 && \
-	/tmp/nodejs/configure --prefix=${NODEJS_DIRECTORY} && \
-	make --directory /tmp/nodejs --jobs $(nproc) && \
-	make --directory /tmp/nodejs --jobs $(nproc) install && \
-	rm -v -R /tmp/nodejs && \
-	apk del --no-cache build-base linux-headers python3
+#RUN apk add --no-cache build-base linux-headers python3 && \
+#	/tmp/nodejs/configure --prefix=${NODEJS_DIRECTORY} && \
+#	make --directory /tmp/nodejs --jobs $(nproc) && \
+#	make --directory /tmp/nodejs --jobs $(nproc) install && \
+#	rm -v -R /tmp/nodejs && \
+#	apk del --no-cache build-base linux-headers python3
 
 # Add to the system paths & set the environment to production
 ENV PATH=${NODEJS_DIRECTORY}/bin:$PATH \

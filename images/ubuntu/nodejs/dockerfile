@@ -21,7 +21,7 @@ RUN apt-get update && \
 		--exclude '*/README.md' \
 		--exclude '*/CHANGELOG.md' \
 		--exclude '*/LICENSE' \
-		--exclude '*/share/man' && \
+		--exclude '*/share/man' \
 		--exclude '*/share/doc' && \
 	apt-get remove --purge --auto-remove --yes wget && \
 	apt-get clean --yes && \

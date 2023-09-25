@@ -615,7 +615,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '18', '19', '20' ]
+        version: [ '18', '20' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:

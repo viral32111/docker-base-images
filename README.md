@@ -8,7 +8,7 @@ This repository builds & publishes my base Docker images that I use across all m
 
 These are the Linux distribution images I use the base for all my other images.
 
-These images are built from root filesystem tarballs, and will always use the latest stable version for each major release.
+These images are built from root filesystem tarballs, and will always use the latest stable version for each major release. There are variants for 64-bit x86 & 64-bit ARM.
 
 The following changes have been made within these images:
  * Switched to a package repository mirror in the United Kingdom.
@@ -39,7 +39,7 @@ The following changes have been made within these images:
 
 These images use Java from [Adoptium Temurin](https://adoptium.net/temurin/releases/), and will always use the latest stable version for each major release.
 
-These images are based on both Ubuntu 23.04 and Alpine Linux 3.18.
+These images are based on both Ubuntu 23.04 and Alpine Linux 3.18, for 64-bit x86.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -53,7 +53,7 @@ These images are based on both Ubuntu 23.04 and Alpine Linux 3.18.
 
 ## .NET
 
-These images are based on both Ubuntu 23.04 and Alpine Linux 3.18.
+These images are based on both Ubuntu 23.04 and Alpine Linux 3.18, for 64-bit x86.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -67,14 +67,13 @@ These images are based on both Ubuntu 23.04 and Alpine Linux 3.18.
 
 ## Node.js
 
-These images are based on both Ubuntu 23.04 and Alpine Linux 3.18.
+These images are based on both Ubuntu 23.04 and Alpine Linux 3.18, for 64-bit x86.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
 | [Node.js v18](https://nodejs.org) | 18.17.1 | [`ghcr.io/viral32111/nodejs:18`](https://github.com/viral32111/docker-base-images/pkgs/container/nodejs) | LTS. |
-| [Node.js v19](https://nodejs.org) | 19.9.0 | [`ghcr.io/viral32111/nodejs:19`](https://github.com/viral32111/docker-base-images/pkgs/container/nodejs) | |
-| [Node.js v20](https://nodejs.org) | 20.6.1 | [`ghcr.io/viral32111/nodejs:19`](https://github.com/viral32111/docker-base-images/pkgs/container/nodejs) | |
-
+| ~~[Node.js v19](https://nodejs.org)~~ | ~~19.9.0~~ | ~~[`ghcr.io/viral32111/nodejs:19`](https://github.com/viral32111/docker-base-images/pkgs/container/nodejs)~~ | EOL. |
+| [Node.js v20](https://nodejs.org) | 20.6.1 | [`ghcr.io/viral32111/nodejs:20`](https://github.com/viral32111/docker-base-images/pkgs/container/nodejs) | |
 
 ## Python
 

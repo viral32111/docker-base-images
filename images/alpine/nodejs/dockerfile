@@ -12,8 +12,10 @@ ARG NODEJS_VERSION=20.7.0 \
 	NODEJS_CHECKSUM=4a22dcb11709bf9e70559fab17f0762e40fbc1d504b2f79e45bcaec17139b639 \
 	NODEJS_DIRECTORY=/opt/nodejs
 
-# Download & extract the pre-built binaries
-RUN apk add --no-cache wget && \
+# Install dependencies & Download the pre-built binaries
+RUN apk add --no-cache \
+		wget \
+		libgcc libstdc++ && \
 	wget --no-hsts --output-document /tmp/nodejs.tar.gz https://unofficial-builds.nodejs.org/download/release/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-linux-x64-musl.tar.gz && \
 	echo "${NODEJS_CHECKSUM} /tmp/nodejs.tar.gz" | sha256sum -c && \
 	mkdir -v -p ${NODEJS_DIRECTORY} && \

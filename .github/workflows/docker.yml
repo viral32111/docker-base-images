@@ -6,7 +6,7 @@ on:
       - 'context/**'
       - 'images/**'
       - '.dockerignore'
-      - '.github/workflows/docker.yml'
+      - '.github/workflows/*.yml'
     branches:
       - '**'
     tags:

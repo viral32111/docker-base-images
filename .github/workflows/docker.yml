@@ -63,7 +63,7 @@ jobs:
 
       - name: Fetch latest version
         id: version
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           RELEASE: ${{ matrix.release }}
           ARCHITECTURE: ${{ matrix.architecture }}
@@ -216,7 +216,7 @@ jobs:
 
       - name: Fetch latest version
         id: version
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           RELEASE: ${{ matrix.release }}
           ARCHITECTURE: ${{ matrix.alternativeArchitecture }}
@@ -355,7 +355,7 @@ jobs:
 
       - name: Fetch latest version
         id: version
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           MATRIX_VERSION: ${{ matrix.version }}
           MATRIX_DISTRO: ${{ matrix.distro }}

@@ -4,7 +4,7 @@
 # https://learn.microsoft.com/en-gb/dotnet/core/install/linux-alpine#dependencies
 
 # Start from Alpine
-FROM ghcr.io/viral32111/alpine:3.18
+FROM ghcr.io/viral32111/alpine:3.19
 
 # Configure version & directory
 ARG DOTNET_VERSION=7.0.11 \

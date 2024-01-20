@@ -36,7 +36,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '18.04', '20.04', '22.04', '23.04' ]
+        release: [ '18.04', '20.04', '22.04', '23.04', '23.10' ]
         architecture: [ 'amd64', 'arm64' ]
     permissions:
       contents: read
@@ -184,7 +184,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '3.16', '3.17', '3.18' ]
+        release: [ '3.16', '3.17', '3.18', '3.19' ]
         architecture: [ 'amd64', 'arm64' ]
         include:
           - architecture: amd64
@@ -788,9 +788,11 @@ jobs:
           - ubuntu:20.04
           - ubuntu:22.04
           - ubuntu:23.04
+          - ubuntu:23.10
           - alpine:3.16
           - alpine:3.17
           - alpine:3.18
+          - alpine:3.19
     permissions:
       packages: write
     steps:

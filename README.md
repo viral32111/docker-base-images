@@ -27,6 +27,7 @@ The following changes have been made within these images:
 | [Ubuntu 22.04](https://www.releases.ubuntu.com/jammy/) | 22.04.3 | [`ghcr.io/viral32111/ubuntu:22.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | LTS. |
 | ~~[Ubuntu 22.10](https://www.releases.ubuntu.com/kinetic/)~~ | ~~22.10~~ | ~~[`ghcr.io/viral32111/ubuntu:22.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu)~~ | EOL. |
 | [Ubuntu 23.04](https://www.releases.ubuntu.com/lunar/) | 23.04 | [`ghcr.io/viral32111/ubuntu:23.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
+| [Ubuntu 23.10](https://releases.ubuntu.com/mantic/) | 23.10 | [`ghcr.io/viral32111/ubuntu:23.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -34,6 +35,7 @@ The following changes have been made within these images:
 | [Alpine Linux 3.16](https://alpinelinux.org/) | 3.16.7 | [`ghcr.io/viral32111/alpine:3.16`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 | [Alpine Linux 3.17](https://alpinelinux.org/) | 3.17.5 | [`ghcr.io/viral32111/alpine:3.17`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 | [Alpine Linux 3.18](https://alpinelinux.org/) | 3.18.3 | [`ghcr.io/viral32111/alpine:3.18`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
+| [Alpine Linux 3.19](https://alpinelinux.org/) | 3.19.0 | [`ghcr.io/viral32111/alpine:3.19`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 
 ## Java
 

@@ -55,8 +55,9 @@ ENV USER_ID=1000 \
 	PATH=/root/.local/bin:/home/user/.local/bin:$PATH \
 	HISTFILE=/dev/null
 
-# Create the regular user
-RUN mkdir --verbose --parents ${USER_HOME} && \
+# Remove any existing user with our user ID then create the regular user
+RUN if getent passwd ${USER_ID} > /dev/null 2>&1; then userdel --force --remove ${USER_NAME}; fi && \
+	mkdir --verbose --parents ${USER_HOME} && \
 	groupadd --system --gid ${USER_ID} ${USER_NAME} && \
 	useradd --system --shell /usr/sbin/nologin --home ${USER_HOME} --comment ${USER_NAME} --uid ${USER_ID} --gid ${USER_ID} ${USER_NAME} && \
 	chown --changes --recursive ${USER_ID}:${USER_ID} ${USER_HOME}

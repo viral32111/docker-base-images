@@ -13,7 +13,7 @@ ARG ASPNETCORE_VERSION=7.0.11 \
 # Download & install ASP.NET Core Runtime
 RUN apk add --no-cache \
 		wget \
-		icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib && \
+		icu-libs krb5-libs libgcc libintl libssl3 libstdc++ zlib && \
 	mkdir -v -p ${ASPNETCORE_DIRECTORY} && \
 	wget --progress dot:mega --output-document /tmp/aspnetcore.tar.gz https://dotnetcli.azureedge.net/dotnet/aspnetcore/Runtime/${ASPNETCORE_VERSION}/aspnetcore-runtime-${ASPNETCORE_VERSION}-linux-musl-x64.tar.gz 2>&1 && \
 	tar x -v -o --strip-components 1 \

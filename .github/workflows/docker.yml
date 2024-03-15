@@ -36,7 +36,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '18.04', '20.04', '22.04', '23.04', '23.10' ]
+        release: [ '18.04', '20.04', '22.04', '23.10' ]
         architecture: [ 'amd64', 'arm64' ]
     permissions:
       contents: read
@@ -787,7 +787,6 @@ jobs:
           - ubuntu:18.04
           - ubuntu:20.04
           - ubuntu:22.04
-          - ubuntu:23.04
           - ubuntu:23.10
           - alpine:3.16
           - alpine:3.17

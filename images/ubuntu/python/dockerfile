@@ -17,7 +17,7 @@ RUN apt-get update && \
 	apt-get install --no-install-recommends --yes \
 		wget \
 		build-essential pkg-config \
-		libssl-dev zlib1g-dev libbz2-dev liblzma-dev lzma-dev libffi-dev libgdbm-dev libgdbm-compat-dev libncurses5-dev libreadline-dev libsqlite3-dev \
+		libssl-dev zlib1g-dev libbz2-dev liblzma-dev lzma-dev libffi-dev libgdbm-dev libgdbm-compat-dev libncurses-dev libreadline-dev libsqlite3-dev \
 		tk-dev uuid-dev && \
 	apt-get clean --yes && \
 	rm --verbose --recursive /var/lib/apt/lists/*
@@ -52,7 +52,7 @@ FROM config
 # Install runtime dependencies
 RUN apt-get update && \
 	apt-get install --no-install-recommends --yes \
-		libssl3 zlib1g libbz2-1.0 liblzma5 lzma libffi8 libgdbm6 libgdbm-compat4 libncurses5 libreadline8 libsqlite3-0 \
+		libssl3 zlib1g libbz2-1.0 liblzma5 lzma libffi8 libgdbm6 libgdbm-compat4 libncurses6 libreadline8 libsqlite3-0 \
 		tk uuid && \
 	apt-get clean --yes && \
 	rm --verbose --recursive /var/lib/apt/lists/*

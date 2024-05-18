@@ -439,7 +439,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '6', '7' ]
+        version: [ '6', '7', '8' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -527,7 +527,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '6', '7' ]
+        version: [ '6', '7', '8' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -783,7 +783,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        image: 
+        image:
           - ubuntu:18.04
           - ubuntu:20.04
           - ubuntu:22.04

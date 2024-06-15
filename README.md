@@ -28,6 +28,7 @@ The following changes have been made within these images:
 | ~~[Ubuntu 22.10](https://www.releases.ubuntu.com/kinetic/)~~ | ~~22.10~~ | ~~[`ghcr.io/viral32111/ubuntu:22.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu)~~ | EOL. |
 | [Ubuntu 23.04](https://www.releases.ubuntu.com/lunar/) | 23.04 | [`ghcr.io/viral32111/ubuntu:23.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 | [Ubuntu 23.10](https://releases.ubuntu.com/mantic/) | 23.10 | [`ghcr.io/viral32111/ubuntu:23.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
+| [Ubuntu 24.04](https://releases.ubuntu.com/noble/) | 24.04 | [`ghcr.io/viral32111/ubuntu:24.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -35,7 +36,8 @@ The following changes have been made within these images:
 | [Alpine Linux 3.16](https://alpinelinux.org/) | 3.16.7 | [`ghcr.io/viral32111/alpine:3.16`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 | [Alpine Linux 3.17](https://alpinelinux.org/) | 3.17.5 | [`ghcr.io/viral32111/alpine:3.17`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 | [Alpine Linux 3.18](https://alpinelinux.org/) | 3.18.3 | [`ghcr.io/viral32111/alpine:3.18`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
-| [Alpine Linux 3.19](https://alpinelinux.org/) | 3.19.0 | [`ghcr.io/viral32111/alpine:3.19`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
+| [Alpine Linux 3.19](https://alpinelinux.org/) | 3.19.1 | [`ghcr.io/viral32111/alpine:3.19`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
+| [Alpine Linux 3.20](https://alpinelinux.org/) | 3.20.0 | [`ghcr.io/viral32111/alpine:3.20`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 
 ## Java
 
@@ -52,6 +54,7 @@ These images are based on both Ubuntu 23.04 and Alpine Linux 3.18, for 64-bit x8
 | [Java 18](https://adoptium.net) | 18.0.2.1+1 | [`ghcr.io/viral32111/java:18`](https://github.com/viral32111/docker-base-images/pkgs/container/java) | |
 | [Java 19](https://adoptium.net) | 19.0.2+7 | [`ghcr.io/viral32111/java:19`](https://github.com/viral32111/docker-base-images/pkgs/container/java) | |
 | [Java 20](https://adoptium.net) | 20.0.2+9 | [`ghcr.io/viral32111/java:20`](https://github.com/viral32111/docker-base-images/pkgs/container/java) | |
+| [Java 21](https://adoptium.net) | 21.x | [`ghcr.io/viral32111/java:21`](https://github.com/viral32111/docker-base-images/pkgs/container/java) | |
 
 ## .NET
 
@@ -61,11 +64,13 @@ These images are based on both Ubuntu 23.04 and Alpine Linux 3.18, for 64-bit x8
 | ----- | ------- | ---------------- | ---- |
 | [.NET Runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) | 6.0.22 | [`ghcr.io/viral32111/dotnet:6`](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet) | LTS. |
 | [.NET Runtime 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | 7.0.11 | [`ghcr.io/viral32111/dotnet:7`](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet) | |
+| [.NET Runtime 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) | 8.x | [`ghcr.io/viral32111/dotnet:8`](https://github.com/viral32111/docker-base-images/pkgs/container/dotnet) | |
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
 | [ASP.NET Core Runtime 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) | 6.0.22 | [`ghcr.io/viral32111/aspnetcore:6`](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore) | LTS. |
 | [ASP.NET Core Runtime 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | 7.0.11 | [`ghcr.io/viral32111/aspnetcore:7`](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore) | |
+| [ASP.NET Core Runtime 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) | 8.x | [`ghcr.io/viral32111/aspnetcore:8`](https://github.com/viral32111/docker-base-images/pkgs/container/aspnetcore) | |
 
 ## Node.js
 

@@ -788,6 +788,7 @@ jobs:
           - ubuntu:20.04
           - ubuntu:22.04
           - ubuntu:23.10
+          - ubuntu:24.04
           - alpine:3.16
           - alpine:3.17
           - alpine:3.18

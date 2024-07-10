@@ -8,7 +8,7 @@
 # https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.1%2B10/OpenJDK19U-jre_x64_linux_hotspot_19.0.1_10.tar.gz
 
 # Start from Ubuntu
-FROM ghcr.io/viral32111/ubuntu:23.10
+FROM ghcr.io/viral32111/ubuntu:24.04
 
 # Configure the Java version & directory
 ARG JAVA_VERSION=20.0.2+9 \

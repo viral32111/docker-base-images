@@ -28,7 +28,7 @@ env:
 jobs:
   ubuntu:
     name: Ubuntu
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       REGISTRY_IMAGE_NAME: ubuntu
       HUMAN_IMAGE_NAME: Ubuntu
@@ -176,7 +176,7 @@ jobs:
 
   alpine:
     name: Alpine Linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       REGISTRY_IMAGE_NAME: alpine
       HUMAN_IMAGE_NAME: Alpine Linux
@@ -316,7 +316,7 @@ jobs:
 
   java:
     name: Java
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs:
       - ubuntu
       - alpine
@@ -428,7 +428,7 @@ jobs:
 
   dotnet:
     name: .NET Runtime
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs:
       - ubuntu
       - alpine
@@ -516,7 +516,7 @@ jobs:
 
   aspnetcore:
     name: ASP.NET Core Runtime
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs:
       - ubuntu
       - alpine
@@ -604,7 +604,7 @@ jobs:
 
   nodejs:
     name: Node.js
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs:
       - ubuntu
       - alpine
@@ -693,7 +693,7 @@ jobs:
 
   python:
     name: Python
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs:
       - ubuntu
     env:
@@ -775,7 +775,7 @@ jobs:
 
   fatManifest:
     name: Fat Manifest
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     needs:
       - ubuntu
       - alpine
@@ -830,7 +830,7 @@ jobs:
 
   cleanup:
     name: Cleanup
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
     needs:
       - ubuntu
@@ -841,16 +841,26 @@ jobs:
       - nodejs
       - python
       - fatManifest
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        image:
+          - ubuntu
+          - alpine
+          - java
+          - dotnet
+          - aspnetcore
+          - nodejs
+          - python
     permissions:
       packages: write
     steps:
-      - name: Delete old Docker images
-        uses: snok/container-retention-policy@v2
+      - name: Delete stale Docker images
+        uses: actions/delete-package-versions@v5
         with:
-          image-names: ubuntu,alpine,java,dotnet,aspnetcore,nodejs,python
-          cut-off: 24 hours ago UTC
-          keep-at-least: 1
-          untagged-only: true
-          skip-tags: latest
-          account-type: personal
-          token: ${{ secrets.PAT_PACKAGES }}
+            package-type: container
+            package-name: ${{ matrix.image }}
+            delete-only-untagged-versions: true
+            min-versions-to-keep: 1
+            ignore-versions: latest

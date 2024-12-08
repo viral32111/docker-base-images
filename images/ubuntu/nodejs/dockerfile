@@ -4,7 +4,7 @@
 # https://nodejs.org/dist/v20.7.0/SHASUMS256.txt.asc
 
 # Start from Ubuntu
-FROM ghcr.io/viral32111/ubuntu:24.04
+FROM ghcr.io/viral32111/ubuntu:24.10
 
 # Configure the version & directory
 ARG NODEJS_VERSION=20.7.0 \

@@ -29,6 +29,7 @@ The following changes have been made within these images:
 | [Ubuntu 23.04](https://www.releases.ubuntu.com/lunar/) | 23.04 | [`ghcr.io/viral32111/ubuntu:23.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 | ~~[Ubuntu 23.10](https://releases.ubuntu.com/mantic/)~~ | ~~23.10~~ | ~~[`ghcr.io/viral32111/ubuntu:23.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu)~~ | EOL. |
 | [Ubuntu 24.04](https://releases.ubuntu.com/noble/) | 24.04 | [`ghcr.io/viral32111/ubuntu:24.04`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | LTS. |
+| [Ubuntu 24.10](https://releases.ubuntu.com/releases/24.10/) | 24.10 | [`ghcr.io/viral32111/ubuntu:24.10`](https://github.com/viral32111/docker-base-images/pkgs/container/ubuntu) | |
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -37,13 +38,13 @@ The following changes have been made within these images:
 | [Alpine Linux 3.17](https://alpinelinux.org/) | 3.17.5 | [`ghcr.io/viral32111/alpine:3.17`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 | [Alpine Linux 3.18](https://alpinelinux.org/) | 3.18.3 | [`ghcr.io/viral32111/alpine:3.18`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 | [Alpine Linux 3.19](https://alpinelinux.org/) | 3.19.1 | [`ghcr.io/viral32111/alpine:3.19`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
-| [Alpine Linux 3.20](https://alpinelinux.org/) | 3.20.2 | [`ghcr.io/viral32111/alpine:3.20`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
+| [Alpine Linux 3.20](https://alpinelinux.org/) | 3.20.3 | [`ghcr.io/viral32111/alpine:3.20`](https://github.com/viral32111/docker-base-images/pkgs/container/alpine) | |
 
 ## Java
 
 These images use Java from [Adoptium Temurin](https://adoptium.net/temurin/releases/), and will always use the latest stable version for each major release.
 
-These images are based on both Ubuntu 24.04 and Alpine Linux 3.20, for 64-bit x86.
+These images are based on both Ubuntu 24.10 and Alpine Linux 3.20, for 64-bit x86.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -58,7 +59,7 @@ These images are based on both Ubuntu 24.04 and Alpine Linux 3.20, for 64-bit x8
 
 ## .NET
 
-These images are based on both Ubuntu 24.04 and Alpine Linux 3.20, for 64-bit x86.
+These images are based on both Ubuntu 24.10 and Alpine Linux 3.20, for 64-bit x86.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -74,7 +75,7 @@ These images are based on both Ubuntu 24.04 and Alpine Linux 3.20, for 64-bit x8
 
 ## Node.js
 
-These images are based on both Ubuntu 24.04 and Alpine Linux 3.20, for 64-bit x86.
+These images are based on both Ubuntu 24.10 and Alpine Linux 3.20, for 64-bit x86.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |
@@ -84,7 +85,7 @@ These images are based on both Ubuntu 24.04 and Alpine Linux 3.20, for 64-bit x8
 
 ## Python
 
-These images are based on Ubuntu 24.04.
+These images are based on Ubuntu 24.10.
 
 | Title | Version | Image name & tag | Note |
 | ----- | ------- | ---------------- | ---- |

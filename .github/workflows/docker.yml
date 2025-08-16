@@ -36,7 +36,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '18.04', '20.04', '22.04', '24.04', '24.10' ]
+        release: [ '18.04', '20.04', '22.04', '24.04', '25.04' ]
         architecture: [ 'amd64', 'arm64' ]
     permissions:
       contents: read
@@ -94,12 +94,17 @@ jobs:
             for ( const milestoneData of milestonesData.entries ) {
               const milestoneName = milestoneData.name.replace( 'ubuntu-', '' );
 
+              if ( !milestoneName.startsWith( RELEASE ) ) {
+                console.warn( `Skipping milestone '${ milestoneName }' it is not for release '${ RELEASE }'...` );
+                continue;
+              }
+
               if ( milestoneName.endsWith( '-updates' ) ) {
                 console.warn( `Skipping milestone '${ milestoneName }'...` );
                 continue;
               }
 
-              console.log( `Checking download link for milestone '${ milestoneName }'...` );
+              console.log( `Checking supported download link for milestone '${ milestoneName }'...` );
               const downloadResponse = await fetch( `https://cdimage.ubuntu.com/ubuntu-base/releases/${ RELEASE }/release/ubuntu-base-${ milestoneName }-base-${ ARCHITECTURE }.tar.gz`, {
                 method: 'HEAD'
               } );
@@ -184,7 +189,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '3.16', '3.17', '3.18', '3.19', '3.20' ]
+        release: [ '3.16', '3.17', '3.18', '3.19', '3.20', '3.21', '3.22' ]
         architecture: [ 'amd64', 'arm64' ]
         include:
           - architecture: amd64
@@ -327,7 +332,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '8', '11', '16', '17', '18', '19', '20', '21' ]
+        version: [ '8', '11', '16', '17', '18', '19', '20', '21', '22', '23', '24' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -439,7 +444,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '6', '7', '8' ]
+        version: [ '6', '7', '8', '9' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -527,7 +532,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '6', '7', '8' ]
+        version: [ '6', '7', '8', '9' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -615,7 +620,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '18', '20' ]
+        version: [ '18', '20', '21', '22', '23', '24' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -788,12 +793,14 @@ jobs:
           - ubuntu:20.04
           - ubuntu:22.04
           - ubuntu:24.04
-          - ubuntu:24.10
+          - ubuntu:25.04
           - alpine:3.16
           - alpine:3.17
           - alpine:3.18
           - alpine:3.19
           - alpine:3.20
+          - alpine:3.21
+          - alpine:3.22
     permissions:
       packages: write
     steps:

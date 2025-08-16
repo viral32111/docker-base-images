@@ -4,11 +4,11 @@
 # https://nodejs.org/dist/v20.7.0/SHASUMS256.txt.asc
 
 # Start from Ubuntu
-FROM ghcr.io/viral32111/ubuntu:24.10
+FROM ghcr.io/viral32111/ubuntu:25.04
 
 # Configure the version & directory
-ARG NODEJS_VERSION=20.7.0 \
-	NODEJS_CHECKSUM=034bbec28da7b729aea531000a56b37076e94e44aa5dfa346a1d1a89025915a8 \
+ARG NODEJS_VERSION=24.6.0 \
+	NODEJS_CHECKSUM=352ddbc48b586c11f018ec9b886225117909ea93e05b4a04a6db32f3e63d0281 \
 	NODEJS_DIRECTORY=/opt/nodejs
 
 # Download & extract the pre-built binaries

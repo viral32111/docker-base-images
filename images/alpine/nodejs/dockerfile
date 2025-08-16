@@ -1,15 +1,16 @@
 # syntax=docker/dockerfile:1
+
 # docker buildx build --progress plain --pull --file ./images/alpine/nodejs/dockerfile --tag ghcr.io/viral32111/nodejs:20.4.0-alpine-3.18.2 /var/empty
 
 # https://unofficial-builds.nodejs.org/download/release/v20.7.0/node-v20.7.0-linux-x64-musl.tar.gz
 # https://unofficial-builds.nodejs.org/download/release/v20.7.0/SHASUMS256.txt
 
 # Start from Alpine Linux
-FROM ghcr.io/viral32111/alpine:3.20
+FROM ghcr.io/viral32111/alpine:3.22
 
 # Configuration
-ARG NODEJS_VERSION=20.7.0 \
-	NODEJS_CHECKSUM=4a22dcb11709bf9e70559fab17f0762e40fbc1d504b2f79e45bcaec17139b639 \
+ARG NODEJS_VERSION=24.6.0 \
+	NODEJS_CHECKSUM=ea4b8200144432af2f00e781199880cc9ac496698c3f1a186303cf5601a1f453 \
 	NODEJS_DIRECTORY=/opt/nodejs
 
 # Install dependencies & Download the pre-built binaries

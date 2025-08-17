@@ -650,9 +650,16 @@ jobs:
         id: version
         run: |
           LATEST_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r --arg VERSION ${{ matrix.version }} '[ .[] | select( .version | startswith( "v" + $VERSION ) ) ][ 0 ].version' | cut -b 2-)
-          LATEST_CHECKSUM=$(case "${{ matrix.distro }}" in alpine) echo $(curl -s https://unofficial-builds.nodejs.org/download/release/v${LATEST_VERSION}/SHASUMS256.txt | grep node-v${LATEST_VERSION}-linux-x64-musl.tar.gz | cut -f 1 -d ' ') ;; *) echo $(curl -s https://nodejs.org/dist/v${LATEST_VERSION}/SHASUMS256.txt.asc | grep node-v${LATEST_VERSION}-linux-x64.tar.gz | cut -f 1 -d ' ') ;; esac)
+          LATEST_CHECKSUM=$(case "${{ matrix.distro }}" in alpine) echo $(curl -s https://unofficial-builds.nodejs.org/download/release/v${LATEST_VERSION}/SHASUMS256.txt | grep node-v${LATEST_VERSION}-linux-x64-musl.tar.gz | cut -f 1 -d ' ') ;; *)
+          echo $(curl -s https://nodejs.org/dist/v${LATEST_VERSION}/SHASUMS256.txt.asc | grep node-v${LATEST_VERSION}-linux-x64.tar.gz | cut -f 1 -d ' ') ;; esac)
           echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
           echo "LATEST_CHECKSUM=${LATEST_CHECKSUM}" >> $GITHUB_OUTPUT
+
+      - name: Fetch compatible NPM version
+        id: npm
+        run: |
+          COMPATIBLE_NPM_VERSION=$(curl -s https://nodejs.org/dist/index.json | jq -r --arg VERSION ${{ matrix.version }} '[ .[] | select( .version | startswith( "v" + $VERSION ) ) ][ 0 ].npm')
+          echo "COMPATIBLE_NPM_VERSION=${COMPATIBLE_NPM_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Clear context directory
         run: rm --verbose --recursive context/*
@@ -695,6 +702,7 @@ jobs:
           build-args: |
             NODEJS_VERSION=${{ steps.version.outputs.LATEST_VERSION }}
             NODEJS_CHECKSUM=${{ steps.version.outputs.LATEST_CHECKSUM }}
+            NPM_VERSION=${{ steps.npm.outputs.COMPATIBLE_NPM_VERSION }}
 
   python:
     name: Python

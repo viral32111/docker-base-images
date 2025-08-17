@@ -11,7 +11,8 @@ FROM ghcr.io/viral32111/alpine:3.22
 # Configuration
 ARG NODEJS_VERSION=24.6.0 \
 	NODEJS_CHECKSUM=ea4b8200144432af2f00e781199880cc9ac496698c3f1a186303cf5601a1f453 \
-	NODEJS_DIRECTORY=/opt/nodejs
+	NODEJS_DIRECTORY=/opt/nodejs \
+	NPM_VERSION=11.5.1
 
 # Install dependencies & Download the pre-built binaries
 RUN apk add --no-cache \
@@ -52,7 +53,7 @@ ENV PATH=${NODEJS_DIRECTORY}/bin:$PATH \
 	NODE_ENV=production
 
 # Update NPM to the latest version
-RUN npm install --global npm && \
+RUN npm install --global npm@${NPM_VERSION} && \
 	rm -v -R $HOME/.npm && \
 	npm cache clean --force
 

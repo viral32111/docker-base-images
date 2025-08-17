@@ -14,7 +14,7 @@ ARG DOTNET_VERSION=9.0.8 \
 RUN apt-get update && \
 	apt-get install --no-install-recommends --yes \
 		wget \
-		libc6 libgcc1 libgcc-s1 libgssapi-krb5-2 libicu74 liblttng-ust1 libssl3 libstdc++6 libunwind8 zlib1g && \
+		libc6 libgcc1 libgcc-s1 libgssapi-krb5-2 libicu76 liblttng-ust1 libssl3 libstdc++6 libunwind8 zlib1g && \
 	mkdir --verbose --parents ${DOTNET_DIRECTORY} && \
 	wget --progress dot:mega --output-document /tmp/dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/${DOTNET_VERSION}/dotnet-runtime-${DOTNET_VERSION}-linux-x64.tar.gz 2>&1 && \
 	tar --verbose --extract --no-same-owner --strip-components 1 --file /tmp/dotnet.tar.gz --directory ${DOTNET_DIRECTORY} \

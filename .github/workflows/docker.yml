@@ -43,7 +43,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
@@ -201,7 +201,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
@@ -340,7 +340,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
@@ -452,7 +452,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
@@ -540,7 +540,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
@@ -628,7 +628,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
@@ -724,7 +724,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
@@ -813,7 +813,7 @@ jobs:
       packages: write
     steps:
       - name: Clone repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Docker
         uses: docker/setup-buildx-action@v3

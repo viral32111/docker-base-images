@@ -47,17 +47,17 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           platforms: linux/${{ matrix.architecture }}
 
@@ -141,7 +141,7 @@ jobs:
 
       - name: Create metadata for Docker image
         id: metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: |
@@ -163,7 +163,7 @@ jobs:
           sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
           file: images/ubuntu/dockerfile
@@ -205,17 +205,17 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           platforms: linux/${{ matrix.architecture }}
 
@@ -282,7 +282,7 @@ jobs:
 
       - name: Create metadata for Docker image
         id: metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: |
@@ -304,7 +304,7 @@ jobs:
           sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
           file: images/alpine/dockerfile
@@ -344,17 +344,17 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           platforms: linux/${{ matrix.architecture }}
 
@@ -395,7 +395,7 @@ jobs:
 
       - name: Create metadata for Docker image
         id: metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: latest=false
@@ -417,7 +417,7 @@ jobs:
           sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
           file: images/${{ matrix.distro }}/java/dockerfile
@@ -456,17 +456,17 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           platforms: linux/${{ matrix.architecture }}
 
@@ -481,7 +481,7 @@ jobs:
 
       - name: Create metadata for Docker image
         id: metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: latest=false
@@ -505,7 +505,7 @@ jobs:
           sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
           file: images/${{ matrix.distro }}/dotnet/dockerfile
@@ -544,17 +544,17 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           platforms: linux/${{ matrix.architecture }}
 
@@ -569,7 +569,7 @@ jobs:
 
       - name: Create metadata for Docker image
         id: metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: latest=false
@@ -593,7 +593,7 @@ jobs:
           sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
           file: images/${{ matrix.distro }}/aspnetcore/dockerfile
@@ -632,17 +632,17 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           platforms: linux/${{ matrix.architecture }}
 
@@ -666,7 +666,7 @@ jobs:
 
       - name: Create metadata for Docker image
         id: metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: latest=false
@@ -688,7 +688,7 @@ jobs:
           sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
           file: images/${{ matrix.distro }}/nodejs/dockerfile
@@ -728,17 +728,17 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           platforms: linux/${{ matrix.architecture }}
 
@@ -751,7 +751,7 @@ jobs:
 
       - name: Create metadata for Docker image
         id: metadata
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ env.DOCKER_REGISTRY_DOMAIN }}/${{ github.repository_owner }}/${{ env.REGISTRY_IMAGE_NAME }}
           flavor: latest=false
@@ -772,7 +772,7 @@ jobs:
           sleep $SLEEP_SECONDS
 
       - name: Build & push Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
           file: images/${{ matrix.distro }}/${{ github.job }}/dockerfile
@@ -816,11 +816,11 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to GitHub Container Registry
         if: ${{ github.event_name != 'pull_request' && !startsWith( github.ref_name, 'dependabot/' ) }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.DOCKER_REGISTRY_DOMAIN }}
           username: ${{ github.repository_owner }}

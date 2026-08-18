@@ -6,10 +6,10 @@
 # https://github.com/adoptium/temurin8-binaries/releases/download/jdk-8u352-b08/OpenJDK8U-jre_x64_alpine-linux_hotspot_8u352b08.tar.gz
 
 # Start from Alpine
-FROM ghcr.io/viral32111/alpine:3.22
+FROM ghcr.io/viral32111/alpine:3.23
 
 # Configure the Java version & directory
-ARG JAVA_VERSION=24.0.2+12 \
+ARG JAVA_VERSION=25.0.4+7 \
 	JAVA_DIRECTORY=/opt/java
 
 # Download Eclipse Temurin's Java from Adoptium

@@ -6,13 +6,13 @@
 # https://unofficial-builds.nodejs.org/download/release/v20.7.0/SHASUMS256.txt
 
 # Start from Alpine Linux
-FROM ghcr.io/viral32111/alpine:3.22
+FROM ghcr.io/viral32111/alpine:3.23
 
 # Configuration
-ARG NODEJS_VERSION=24.6.0 \
-	NODEJS_CHECKSUM=ea4b8200144432af2f00e781199880cc9ac496698c3f1a186303cf5601a1f453 \
+ARG NODEJS_VERSION=24.19.0 \
+	NODEJS_CHECKSUM=c60223786df14a5d23e220ebb8e60318f5322640a62f90e6d9e54d3a18da532e \
 	NODEJS_DIRECTORY=/opt/nodejs \
-	NPM_VERSION=11.5.1
+	NPM_VERSION=11.17.0
 
 # Install dependencies & Download the pre-built binaries
 RUN apk add --no-cache \

@@ -36,7 +36,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '18.04', '20.04', '22.04', '24.04', '25.04' ]
+        release: [ '18.04', '20.04', '22.04', '24.04', '26.04' ]
         architecture: [ 'amd64', 'arm64' ]
     permissions:
       contents: read
@@ -189,7 +189,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        release: [ '3.19', '3.20', '3.21', '3.22' ]
+        release: [ '3.19', '3.20', '3.21', '3.22', '3.23' ]
         architecture: [ 'amd64', 'arm64' ]
         include:
           - architecture: amd64
@@ -332,7 +332,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '8', '11', '16', '17', '18', '19', '20', '21', '22', '23', '24' ]
+        version: [ '8', '11', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -444,7 +444,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '6', '7', '8', '9' ]
+        version: [ '8', '9', '10' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -532,7 +532,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        version: [ '6', '7', '8', '9' ]
+        version: [ '8', '9', '10' ]
         distro: [ 'ubuntu', 'alpine' ]
         architecture: [ 'amd64' ]
     permissions:
@@ -801,7 +801,7 @@ jobs:
           - ubuntu:20.04
           - ubuntu:22.04
           - ubuntu:24.04
-          - ubuntu:25.04
+          - ubuntu:26.04
           - alpine:3.16
           - alpine:3.17
           - alpine:3.18
@@ -809,6 +809,7 @@ jobs:
           - alpine:3.20
           - alpine:3.21
           - alpine:3.22
+          - alpine:3.23
     permissions:
       packages: write
     steps:
